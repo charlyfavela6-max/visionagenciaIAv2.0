@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cripto Sim</title>
+<style>
+  :root {
+    --fondo:#0d1015; --panel:#161b22; --linea:#232a33; --texto:#e6edf3;
+    --tenue:#8b949e; --verde:#3fb950; --rojo:#f85149; --oro:#ffd60a;
+    --azul:#58a6ff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--fondo); color:var(--texto);
+         font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  .caja { max-width:1180px; margin:0 auto; padding:22px 18px 60px; }
+  h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.4px; }
+  .sub { color:var(--tenue); margin:0 0 20px; }
+  .aviso { background:#1c1f16; border:1px solid #3d3a1a; color:#e3d67a;
+           padding:9px 13px; border-radius:8px; font-size:13px; margin-bottom:18px; }
+  .panel { background:var(--panel); border:1px solid var(--linea);
+           border-radius:12px; padding:16px; margin-bottom:16px; }
+  .fila { display:flex; gap:12px; flex-wrap:wrap; }
+  .fila > .panel { flex:1 1 190px; margin:0; }
+  .rot { color:var(--tenue); font-size:12px; text-transform:uppercase;
+         letter-spacing:.6px; margin-bottom:6px; }
+  .num { font-size:26px; font-weight:650; font-variant-numeric:tabular-nums; }
+  .verde { color:var(--verde); } .rojo { color:var(--rojo); }
+  input { background:#0d1117; border:1px solid #30363d; color:var(--texto);
+          padding:12px 14px; border-radius:8px; font-size:18px; width:200px;
+          font-variant-numeric:tabular-nums; }
+  button { border:0; border-radius:8px; padding:12px 26px; font-size:15px;
+           font-weight:650; cursor:pointer; }
+  .ir { background:var(--verde); color:#04140a; }
+  .parar { background:#30363d; color:var(--texto); }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  th { text-align:left; color:var(--tenue); font-weight:600; font-size:12px;
+       text-transform:uppercase; letter-spacing:.5px; padding:6px 8px;
+       border-bottom:1px solid var(--linea); }
+  td { padding:7px 8px; border-bottom:1px solid #1b2028; }
+  .chip { display:inline-block; padding:2px 8px; border-radius:20px;
+          font-size:11px; font-weight:650; background:#21262d; color:var(--azul); }
+  .precios { display:flex; gap:18px; flex-wrap:wrap; }
+  .precios div { font-variant-numeric:tabular-nums; }
+  .precios span { color:var(--tenue); font-size:12px; display:block; }
+  .estado { display:inline-block; width:8px; height:8px; border-radius:50%;
+            background:var(--verde); margin-right:6px; }
+  .vacio { color:var(--tenue); padding:14px 8px; }
+  code { color:var(--oro); }
+</style>
+</head>
+<body>
+<div class="caja">
+  <h1>Cripto Sim</h1>
+  <p class="sub">Precios reales de Coinbase, dinero simulado. <span id="fuente"></span></p>
+
+  <div class="aviso">
+    <b>Es un simulador.</b> No hay llaves de exchange ni forma de mandar una orden
+    real: todo el resultado es aritmética sobre el precio de mercado. Sirve para
+    medir la estrategia, no para operar.
+  </div>
+
+  <div class="panel">
+    <div class="rot">Estrategia cargada</div>
+    <p style="margin:0 0 10px">Vela de <b><span id="horas">4</span> h</b>. Tres tácticas a la vez sobre
+      el mismo capital, para ver cuál gana:
+      <b>tendencia</b> (entra cuando la EMA20 cruza arriba de la EMA50, sale cuando el
+      precio cierra bajo la EMA20 — es la que más aporta),
+      <b>reversión</b> (compra el RSI bajo 30 y suelta cuando vuelve a 55) y
+      <b>ruptura</b> (máximo de 5 días con volumen, con stop que sube).
+      Máximo <span id="maxab">4</span> posiciones, <span id="frac">20</span>% del capital
+      en cada una, comisión 0.1% por lado y stop de emergencia en cada operación.</p>
+    <p style="margin:0 0 10px;color:var(--tenue)">Medida sobre 116 días de historia real:
+      <b class="verde">tendencia +20.9%</b> · <b class="verde">ruptura +9.0%</b> ·
+      <b class="rojo">reversión −9.8%</b>, contra <b>+1.9%</b> de comprar y esperar.
+      Por eso reversión está para vigilarla, no porque funcione.</p>
+    <div class="precios" id="precios"></div>
+  </div>
+
+  <div class="panel">
+    <div class="rot">Cuánto quieres simular</div>
+    <div class="fila" style="align-items:center">
+      <input id="monto" type="number" min="1" step="10" value="1000" placeholder="1000">
+      <button class="ir" id="ejecutar">EJECUTAR</button>
+      <button class="parar" id="detener">Detener</button>
+      <span id="msg" style="color:var(--tenue)"></span>
+    </div>
+  </div>
+
+  <div class="fila">
+    <div class="panel"><div class="rot">Capital</div><div class="num" id="capital">—</div></div>
+    <div class="panel"><div class="rot">Ganancia</div><div class="num" id="ganancia">—</div></div>
+    <div class="panel"><div class="rot">Efectivo libre</div><div class="num" id="efectivo">—</div></div>
+    <div class="panel"><div class="rot">Operaciones</div><div class="num" id="ops">—</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="rot">Posiciones abiertas</div>
+    <table><thead><tr><th>Moneda</th><th>Táctica</th><th>Entrada</th><th>Ahora</th>
+      <th>Objetivo</th><th>Stop</th><th>P&amp;L</th><th>Por qué entró</th></tr></thead>
+      <tbody id="abiertas"></tbody></table>
+  </div>
+
+  <div class="panel">
+    <div class="rot">Cómo va cada táctica</div>
+    <table><thead><tr><th>Táctica</th><th>Operaciones</th><th>En verde</th>
+      <th>Resultado</th></tr></thead><tbody id="tacticas"></tbody></table>
+  </div>
+
+  <div class="panel">
+    <div class="rot">Últimas cerradas</div>
+    <table><thead><tr><th>Moneda</th><th>Táctica</th><th>Motivo</th><th>Duró</th>
+      <th>Entrada</th><th>Salida</th><th>Resultado</th></tr></thead>
+      <tbody id="cerradas"></tbody></table>
+  </div>
+
+  <div class="panel">
+    <div class="rot">Avisos de WhatsApp <span id="wa"></span></div>
+    <div id="bitacora"></div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const usd = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toFixed(2);
+const color = (n) => n >= 0 ? 'verde' : 'rojo';
+const signo = (n) => (n >= 0 ? '+' : '') + n.toFixed(2);
+const hora = (t) => new Date(t).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+const pinta = (n, d = 4) => n >= 1000 ? n.toFixed(2) : n.toFixed(d);
+
+async function pinta_todo() {
+  let e;
+  try { e = await (await fetch('/api/estado')).json(); }
+  catch { $('fuente').textContent = '· sin conexión con el servidor'; return; }
+
+  $('fuente').innerHTML = '<span class="estado"></span>' + e.fuente +
+    (e.corriendo ? ' · corriendo' : ' · detenido');
+  $('maxab').textContent = e.reglas.maxAbiertas;
+  $('frac').textContent = (e.reglas.fraccion * 100).toFixed(0);
+  $('horas').textContent = e.reglas.horasVela;
+  $('ejecutar').disabled = e.corriendo;
+  $('detener').disabled = !e.corriendo;
+
+  $('precios').innerHTML = Object.entries(e.precios).map(([s, p]) =>
+    `<div><span>${s.split('-')[0]}</span>$${pinta(p)}</div>`).join('');
+
+  $('capital').textContent = e.capitalInicial ? usd(e.capital) : '—';
+  $('ganancia').innerHTML = e.capitalInicial
+    ? `<span class="${color(e.ganancia)}">${signo(e.ganancia)} <small>(${signo(e.gananciaPct)}%)</small></span>`
+    : '—';
+  $('efectivo').textContent = e.capitalInicial ? usd(e.efectivo) : '—';
+  $('ops').textContent = e.posiciones.length + ' / ' + (e.cerradas.length + e.posiciones.length);
+
+  $('abiertas').innerHTML = e.posiciones.map((p) => `<tr>
+    <td><b>${p.simbolo.split('-')[0]}</b></td><td><span class="chip">${p.tactica}</span></td>
+    <td>$${pinta(p.precioEntrada)}</td><td>$${pinta(p.precio)}</td>
+    <td>$${pinta(p.tp)}</td><td>$${pinta(p.sl)}</td>
+    <td class="${color(p.ganancia)}">${signo(p.ganancia)} (${signo(p.gananciaPct)}%)</td>
+    <td style="color:var(--tenue)">${p.razon}</td></tr>`).join('')
+    || '<tr><td colspan="8" class="vacio">Ninguna abierta.</td></tr>';
+
+  $('tacticas').innerHTML = Object.entries(e.porTactica).map(([t, v]) => `<tr>
+    <td><span class="chip">${t}</span></td><td>${v.n}</td>
+    <td>${v.ganadas} (${(v.ganadas / v.n * 100).toFixed(0)}%)</td>
+    <td class="${color(v.ganancia)}">${signo(v.ganancia)}</td></tr>`).join('')
+    || '<tr><td colspan="4" class="vacio">Todavía no cierra ninguna.</td></tr>';
+
+  $('cerradas').innerHTML = e.cerradas.map((c) => `<tr>
+    <td><b>${c.simbolo.split('-')[0]}</b></td><td><span class="chip">${c.tactica}</span></td>
+    <td>${c.motivo}</td><td>${c.minutos} min</td>
+    <td>$${pinta(c.precioEntrada)}</td><td>$${pinta(c.precioSalida)}</td>
+    <td class="${color(c.ganancia)}">${signo(c.ganancia)} (${signo(c.gananciaPct)}%)</td></tr>`).join('')
+    || '<tr><td colspan="7" class="vacio">Nada cerrado todavía.</td></tr>';
+
+  $('wa').innerHTML = e.whatsapp.activo
+    ? '<span class="chip" style="color:var(--verde)">conectado</span>'
+    : '<span class="chip" style="color:var(--oro)">sin credenciales — sólo se registran aquí</span>';
+  $('bitacora').innerHTML = e.whatsapp.ultimos.map((m) =>
+    `<div style="border-bottom:1px solid #1b2028;padding:7px 0">
+       <span style="color:var(--tenue)">${hora(m.hora)}</span>
+       ${m.enviado ? '' : '<span class="chip" style="color:var(--oro)">no enviado</span>'}
+       <div style="white-space:pre-wrap">${m.texto.replace(/[<>]/g, '')}</div></div>`).join('')
+    || '<div class="vacio">Sin avisos todavía.</div>';
+}
+
+$('ejecutar').onclick = async () => {
+  $('msg').textContent = 'arrancando…';
+  const r = await fetch('/api/ejecutar', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ monto: Number($('monto').value) }) });
+  const j = await r.json();
+  $('msg').textContent = j.error ? '⚠ ' + j.error : 'corriendo';
+  pinta_todo();
+};
+$('detener').onclick = async () => {
+  await fetch('/api/detener', { method: 'POST' });
+  $('msg').textContent = 'detenida';
+  pinta_todo();
+};
+
+pinta_todo();
+setInterval(pinta_todo, 2000);
+</script>
+</body>
+</html>
