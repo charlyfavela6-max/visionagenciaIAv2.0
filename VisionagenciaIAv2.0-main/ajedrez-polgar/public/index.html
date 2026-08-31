@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ajedrez Polgar vs Kasparov — aprende con jugadas reales</title>
+<meta name="description" content="Juega como Judit Polgar contra la base de partidas de Kasparov. Las piezas fantasma te muestran la jugada que ella jugó de verdad en esa posición.">
+<meta name="theme-color" content="#12151c">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♛</text></svg>">
+</head>
+<body>
+<header class="barra">
+  <div class="marca"><span class="glifo">♛</span><div><b>Polgar vs Kasparov</b><small id="subtitulo">Cargando partidas reales…</small></div></div>
+  <div class="acciones">
+    <button id="btn-nueva" class="btn">Nueva partida</button>
+    <button id="btn-ayuda" class="btn fantasma">¿Cómo funciona?</button>
+  </div>
+</header>
+
+<main>
+  <section class="zona-tablero">
+    <div class="etiqueta-lado" id="lado-arriba"><span class="punto rival"></span> <b>Kasparov</b> <em id="reloj-arriba"></em></div>
+    <div class="marco">
+      <div id="tablero" class="tablero"></div>
+      <svg id="capa-flechas" class="capa-flechas" viewBox="0 0 8 8" preserveAspectRatio="none"></svg>
+      <div id="promocion" class="promocion oculto"></div>
+      <div id="fin" class="fin oculto"></div>
+    </div>
+    <div class="etiqueta-lado"><span class="punto yo"></span> <b>Tú, jugando como Judit Polgar</b> <em id="reloj-abajo"></em></div>
+    <div class="barra-eval"><div id="eval-yo" class="eval-yo"></div><span id="eval-txt">0.0</span></div>
+  </section>
+
+  <aside class="panel">
+    <div class="tarjeta consejo" id="tarjeta-consejo">
+      <div class="tarjeta-cabeza"><span class="chip" id="chip-fuente">libro</span><h2>Tu jugada</h2></div>
+      <div class="jugada-grande" id="consejo-san">…</div>
+      <p class="fuente" id="consejo-fuente"></p>
+      <ul class="porques" id="consejo-porques"></ul>
+      <div class="plan" id="consejo-plan"></div>
+      <div class="botones">
+        <button id="btn-jugar-sugerida" class="btn primario">Jugar esta</button>
+        <button id="btn-alternativas" class="btn fantasma">Otras suyas</button>
+      </div>
+      <div id="alternativas" class="alternativas oculto"></div>
+    </div>
+
+    <div class="tarjeta" id="tarjeta-kasparov">
+      <div class="tarjeta-cabeza"><span class="chip rival">Kasparov</span><h2 id="kasparov-san">—</h2></div>
+      <p class="fuente" id="kasparov-fuente">Esperando la primera jugada.</p>
+    </div>
+
+    <div class="tarjeta stats">
+      <div class="stat"><b id="st-precision">—</b><small>coincides con Polgar</small></div>
+      <div class="stat"><b id="st-racha">0</b><small>racha</small></div>
+      <div class="stat"><b id="st-libro">0</b><small>jugadas en libro</small></div>
+    </div>
+
+    <div class="tarjeta">
+      <div class="tarjeta-cabeza"><h2>Partida</h2><button id="btn-deshacer" class="btn mini">Deshacer</button></div>
+      <ol id="lista-jugadas" class="jugadas"></ol>
+    </div>
+
+    <div class="tarjeta ajustes">
+      <label>Piezas fantasma
+        <select id="sel-fantasma">
+          <option value="siempre">Siempre visibles</option>
+          <option value="plan">Con el plan completo</option>
+          <option value="pedido">Solo si las pido</option>
+        </select>
+      </label>
+      <label>Fuerza de Kasparov
+        <select id="sel-nivel">
+          <option value="1">Tranquilo</option>
+          <option value="2" selected>Normal</option>
+          <option value="3">Bestia</option>
+        </select>
+      </label>
+      <label>Juegas con
+        <select id="sel-color">
+          <option value="w">Blancas</option>
+          <option value="b">Negras</option>
+        </select>
+      </label>
+    </div>
+  </aside>
+</main>
+
+<div id="aviso" class="aviso oculto"></div>
+
+<dialog id="dlg-ayuda" class="dlg">
+  <h2>Cómo se juega</h2>
+  <ol>
+    <li><b>Tú eres Judit Polgar.</b> Las piezas <span class="ej-fantasma">fantasma</span> del tablero marcan la jugada que <b>ella jugó de verdad</b> en esa misma posición, sacada de sus 1.823 partidas.</li>
+    <li><b>Kasparov responde</b> con sus propias jugadas reales (2.127 partidas). Mientras los dos sigan el libro, estás reviviendo ajedrez que existió.</li>
+    <li><b>Cuando la posición se sale de sus partidas</b> — porque tú o él jugaron otra cosa — el motor sigue con el <i>estilo</i> de cada uno: Polgar ataca al rey, Kasparov aprieta el centro. La tarjeta te dice siempre cuál de los dos casos es.</li>
+    <li><b>Puedes desobedecer.</b> Si juegas otra cosa, te digo qué jugó ella y cuánto cambia la evaluación. Ahí se aprende.</li>
+  </ol>
+  <p class="nota">Las partidas vienen de la base pública PgnMentor. Ninguna jugada del libro está inventada.</p>
+  <button class="btn primario" onclick="document.getElementById('dlg-ayuda').close()">Entendido</button>
+</dialog>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

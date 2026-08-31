@@ -1,0 +1,14 @@
+{
+  "name": "ajedrez-polgar",
+  "version": "1.0.0",
+  "description": "Aprende ajedrez jugando con las jugadas reales de Judit Polgar contra la base de partidas de Kasparov",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build:libro": "node scripts/build-book.mjs",
+    "test": "node scripts/perft.mjs"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}
