@@ -5,7 +5,7 @@ const p = await b.newPage();
 const errores = [];
 p.on('console', (m) => { if (m.type() === 'error') errores.push(m.text()); });
 p.on('pageerror', (e) => errores.push('PAGEERROR ' + e.message));
-await p.goto('http://localhost:3000', { waitUntil: 'networkidle0' });
+await p.goto(process.env.URL || 'http://localhost:3000', { waitUntil: 'networkidle0' });
 await p.waitForFunction(() => document.getElementById('consejo-san').textContent !== '…', { timeout: 20000 });
 
 const leer = () => p.evaluate(() => ({
