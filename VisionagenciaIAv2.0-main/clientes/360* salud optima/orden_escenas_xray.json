@@ -1,0 +1,18 @@
+{
+  "slug": "360* salud optima",
+  "order": "suggest_scenes + xray_stride_effect",
+  "status": "completed",
+  "detail": "4 escenas sugeridas con prompts de imagen + efecto rayos X para stride. Guardado en escenas_sugeridas.json.",
+  "output": {
+    "file": "escenas_sugeridas.json",
+    "scenes": [
+      "hook",
+      "demo",
+      "trust",
+      "cta"
+    ],
+    "xray_effect": "included in each scene prompt"
+  },
+  "next_phase": "imagen",
+  "completed_at": "2026-08-04T22:36:44.496871+00:00"
+}

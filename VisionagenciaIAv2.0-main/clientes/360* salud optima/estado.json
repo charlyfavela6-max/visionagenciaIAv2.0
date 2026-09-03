@@ -1,0 +1,106 @@
+{
+  "cliente": "360* salud optima",
+  "telefono": "5216275177203",
+  "fase_actual": "guion_audio",
+  "oferta": null,
+  "unicornio_referencia": null,
+  "guion": {
+    "texto": "[Guion inferido de 5 archivo(s) de audio]",
+    "version": "master"
+  },
+  "voz": {
+    "clonada": true,
+    "version": "v1_original",
+    "banco_voz_default": null,
+    "audio_path": "audio_original.mp3",
+    "voice_id_1": "pnzuVCUiUy0sudFICMht",
+    "voice_id_2_instagram": "NVnDRE5dMj2Xg2Em1PSO",
+    "voice_id_nuevo_2026_07_28": "VtyEFemPH1Reo3ab2e2x",
+    "nota": "El voice_id anterior (pnzuVCUiUy0sudFICMht) fue borrado de la cuenta y daba 404. Reclonada desde audio_original.mp3 (138s)."
+  },
+  "fotos_referencia": [],
+  "ancla_identidad": {
+    "descripcion_prenda": null,
+    "descripcion_rostro": null
+  },
+  "escenas": {
+    "hook": {
+      "estado": "pendiente",
+      "path": null
+    },
+    "demo": {
+      "estado": "pendiente",
+      "path": null
+    },
+    "trust": {
+      "estado": "pendiente",
+      "path": null
+    },
+    "cta": {
+      "estado": "pendiente",
+      "path": null
+    }
+  },
+  "video": {
+    "estado": "aprobada",
+    "path": "WhatsApp Video 2026-07-23 at 2.53.59 PM.mp4"
+  },
+  "publicacion": {
+    "facebook": null,
+    "meta_ads": null,
+    "admin_agregado": false
+  },
+  "metricas": {
+    "datos": null,
+    "ultima_actualizacion": null
+  },
+  "historial": [
+    {
+      "ts": "2026-07-06T19:51:32.740Z",
+      "fase": "oferta",
+      "accion": "estado inicial creado (template)"
+    },
+    {
+      "ts": "2026-07-06T21:15:10.905Z",
+      "fase": "imagen",
+      "accion": "status real detectado en auditoria: storyboard e imagen v2 listos, falta armar video final"
+    },
+    {
+      "ts": "2026-07-07T00:59:50.403Z",
+      "fase": "imagen",
+      "accion": "recibido: Buenas Tardes mi estimado Charlye \nestoy en eso \nAla Brevedad!!!"
+    },
+    {
+      "ts": "2026-07-07T01:00:10.000Z",
+      "fase": "imagen",
+      "accion": "cliente avisa que esta resolviendo algo de su lado pronto, sin dato nuevo ni pendiente claro de mi parte; no se genero nada, se respondio breve"
+    },
+    {
+      "ts": "2026-07-24T01:54:30.000Z",
+      "fase": "voz",
+      "accion": "voces clonadas: audio_original (pnzuVCUiUy0sudFICMht) e instagram (NVnDRE5dMj2Xg2Em1PSO)"
+    },
+    {
+      "ts": "2026-07-28T23:40:00.000Z",
+      "fase": "publicacion",
+      "accion": "voz reclonada como '360 Salud Asesor MX' = VtyEFemPH1Reo3ab2e2x; guiones reescritos sin claims terapeuticos"
+    },
+    {
+      "ts": "2026-08-04T21:36:00Z",
+      "fase": "imagen",
+      "accion": "ORDEN: 1) Sugerir escenas para las imagenes existentes que ilustren la historia del audio balsamo raramuri. 2) En stride, la persona que salga en video debe tener efecto rayos X (X-ray vision, skeletal/structural view, transparent skin showing inner body, medical imaging aesthetic)."
+    },
+    {
+      "ts": "2026-08-04T22:26:36.333969+00:00",
+      "fase": "imagen",
+      "accion": "4 escenas sugeridas con prompts de imagen + efecto rayos X para stride. Guardado en escenas_sugeridas.json"
+    },
+    {
+      "ts": "2026-08-04T23:28:07.272062Z",
+      "fase": "guion_audio",
+      "accion": "Fase corregida por Carlos: estaba en 'imagen' tras la pasada de OpenCode; el trabajo real esta en audio."
+    }
+  ],
+  "createdAt": "2026-07-06T19:51:32.740Z",
+  "updatedAt": "2026-08-04T23:28:07.272062Z"
+}

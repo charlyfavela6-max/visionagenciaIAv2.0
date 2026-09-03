@@ -1,0 +1,52 @@
+{
+  "campaña": "360° Salud Óptima - Bálsamo Raramuri",
+  "producto": "Boswellia Serrata",
+  "duración_total": "20 segundos",
+  "formato": "9:16 vertical",
+  "estilo_general": "Documental / candid, grabado con smartphone, luz natural, tono íntimo y emocional",
+  "escenas": [
+    {
+      "numero": 1,
+      "nombre_escena": "HOOK - La mirada que lo entendió todo",
+      "prompt_imagen": "Documentary-style vertical 9:16 candid photo shot on a smartphone. An older Latina mother in her 60s, wearing a simple house cardigan, standing at the bottom of a narrow home staircase, hesitating, one hand gripping the wooden handrail tightly, her face showing quiet discomfort and effort. Warm natural morning light from a nearby window, slightly grainy, authentic handheld feel, soft focus background of a modest Mexican home interior. Emotional, intimate, real-life moment, no makeup look, honest wrinkles and expressions. Slight motion blur suggesting a spontaneous captured moment.",
+      "prompt_rayos_x_stride": "Same older Latina mother standing at the staircase, but rendered with a realistic medical X-ray vision effect: her skin becomes semi-transparent revealing the internal anatomy of her right knee joint — femur, tibia, patella and cartilage clearly visible with a soft glowing bluish-white radiographic aesthetic. The inflamed knee area glows in warm red/orange highlighting the joint stress and swelling. The rest of her body maintains a realistic photographic appearance, blending seamlessly between real skin and translucent X-ray zones. Cinematic medical-imaging style, anatomically accurate skeletal structure, ethereal internal glow, documentary realism preserved in face and posture. 9:16 vertical.",
+      "duracion_segundos": 5,
+      "transicion": "Corte seco con leve zoom-in (punch-in) hacia la rodilla"
+    },
+    {
+      "numero": 2,
+      "nombre_escena": "DEMO - El descubrimiento del suplemento",
+      "prompt_imagen": "Documentary-style vertical 9:16 smartphone photo. Close-up of two hands — a younger adult child's hand gently holding a bottle of Boswellia Serrata supplement, showing it to their older mother whose hands reach toward it. Kitchen table setting in a warm modest home, natural window light, soft shadows, shallow depth of field. Candid, unposed, authentic moment of care and discovery. Slightly grainy smartphone texture, warm color grade, realistic skin tones. Focus on the supplement bottle and the connection between hands.",
+      "prompt_rayos_x_stride": "The same mother now walking a few steps forward with growing confidence, rendered with realistic X-ray vision effect: translucent skin over both legs revealing healthy skeletal structure — knees, joints and connective tissue now glowing in a calm, soothing green/blue radiographic light indicating relief and recovery. Smooth transition zones between real skin and X-ray transparency. Anatomically accurate, medical-imaging aesthetic, cinematic and realistic, preserving her genuine facial expression of relief. 9:16 vertical.",
+      "duracion_segundos": 5,
+      "transicion": "Disolvencia suave (cross dissolve) con brillo cálido"
+    },
+    {
+      "numero": 3,
+      "nombre_escena": "TRUST - Selección cuidadosa y personalizada",
+      "prompt_imagen": "Documentary-style vertical 9:16 smartphone photo. Overhead flat-lay shot on a wooden table showing several supplement bottles arranged, with the Boswellia Serrata bottle placed at the center and highlighted, next to a handwritten notebook with health notes and a cup of tea. A hand pointing at the chosen bottle. Warm authentic lighting, natural home environment, candid and honest, slight smartphone grain. Conveys careful research and trustworthy selection among many options.",
+      "prompt_rayos_x_stride": "A person standing centered, torso and legs shown with realistic X-ray vision effect illustrating three highlighted internal systems simultaneously: the circulatory system glowing red-blue along the legs, the pancreas area softly glowing to represent diabetes/metabolic health, and the knee joints glowing to represent articular health. Semi-transparent skin revealing accurate internal anatomy, medical radiographic aesthetic with clean glowing highlights, realistic photographic face and clothing edges. Cinematic, trustworthy medical-imaging look. 9:16 vertical.",
+      "duracion_segundos": 5,
+      "transicion": "Barrido suave lateral (whip pan) hacia el CTA"
+    },
+    {
+      "numero": 4,
+      "nombre_escena": "CTA - Asesoría gratis / Contacto",
+      "prompt_imagen": "Documentary-style vertical 9:16 smartphone selfie shot. A warm, approachable adult presenter (the child from the story) looking directly into the camera with a genuine caring smile, holding the Boswellia Serrata bottle near their chest, in a cozy home setting with soft natural light. Candid, authentic, trustworthy expression as if inviting the viewer to write a message. Slight smartphone grain, warm intimate tone. Space on the lower third for a call-to-action text overlay.",
+      "prompt_rayos_x_stride": "The presenter shown briefly with a subtle realistic X-ray vision transition effect over the chest and hands — semi-transparent skin revealing a gently glowing healthy ribcage and heart with warm light, symbolizing vitality and wellbeing. The effect fades smoothly back into a fully realistic photographic look as they smile at the camera. Medical-imaging aesthetic, anatomically accurate, soft and reassuring glow, seamless blend between X-ray and real skin. 9:16 vertical.",
+      "duracion_segundos": 5,
+      "transicion": "Fundido final a texto CTA con logo (fade to CTA card)"
+    }
+  ],
+  "notas_direccion": {
+    "audio": "Voz en off íntima y pausada, música suave emotiva de fondo que crece hacia el CTA",
+    "texto_en_pantalla": [
+      "Escena 1: 'No me lo dijo: lo vi.'",
+      "Escena 2: 'Boswellia Serrata'",
+      "Escena 3: 'Una dosis correcta para cada quien'",
+      "Escena 4: 'Escríbeme — Asesoría GRATIS'"
+    ],
+    "consistencia_personaje": "Mantener el mismo rostro y vestuario de la madre en escenas 1 y 2 para continuidad narrativa.",
+    "uso_efecto_rayos_x": "Usar el efecto X-ray de forma breve y sutil (1-1.5s por escena) para no perder el tono documental; funciona como refuerzo visual del beneficio, no como elemento dominante."
+  }
+}
