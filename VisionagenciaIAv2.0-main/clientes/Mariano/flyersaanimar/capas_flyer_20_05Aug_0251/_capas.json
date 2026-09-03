@@ -1,0 +1,31 @@
+{
+  "fuente": "clientes/Mariano/flyersaanimar/flyer_20_05Aug_0251.jpg",
+  "metodo": "GPT Image 2 edit borra el texto; la diferencia contra el original da el alfa; las franjas se detectan del perfil por renglon de la mascara",
+  "seedream_5_0": "su separacion real de capas solo esta en fal.ai y Segmind. No hay FAL_KEY en el .env, WaveSpeed responde 'Model not found' y en Atlas ninguno de sus 129 modelos es seedream (medido el 2026-08-05).",
+  "franjas": [
+    [
+      0,
+      228
+    ],
+    [
+      272,
+      513
+    ],
+    [
+      1145,
+      1260
+    ],
+    [
+      1502,
+      1599
+    ]
+  ],
+  "capas": [
+    "00_fondo_sin_texto.png",
+    "01_todo_el_texto.png",
+    "02_bloque_00_14.png",
+    "03_bloque_17_32.png",
+    "04_bloque_71_78.png",
+    "05_bloque_93_99.png"
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "horas": 72.0,
+  "videos": [
+    {
+      "archivo": "01_12Aug_203243.mp4",
+      "cuando": "2026-08-12T20:32:43+00:00",
+      "segundos": 79.6,
+      "texto": ""
+    },
+    {
+      "archivo": "02_12Aug_230129.mp4",
+      "cuando": "2026-08-12T23:01:29+00:00",
+      "segundos": 14.9,
+      "texto": ""
+    },
+    {
+      "archivo": "03_12Aug_234107.mp4",
+      "cuando": "2026-08-12T23:41:07+00:00",
+      "segundos": 2.8,
+      "texto": ""
+    },
+    {
+      "archivo": "04_12Aug_234115.mp4",
+      "cuando": "2026-08-12T23:41:15+00:00",
+      "segundos": 22.1,
+      "texto": ""
+    },
+    {
+      "archivo": "05_12Aug_234123.mp4",
+      "cuando": "2026-08-12T23:41:23+00:00",
+      "segundos": 20.2,
+      "texto": ""
+    },
+    {
+      "archivo": "06_12Aug_234127.mp4",
+      "cuando": "2026-08-12T23:41:27+00:00",
+      "segundos": 9.9,
+      "texto": ""
+    },
+    {
+      "archivo": "07_12Aug_234131.mp4",
+      "cuando": "2026-08-12T23:41:31+00:00",
+      "segundos": 15.9,
+      "texto": ""
+    },
+    {
+      "archivo": "08_12Aug_234137.mp4",
+      "cuando": "2026-08-12T23:41:37+00:00",
+      "segundos": 20.9,
+      "texto": ""
+    },
+    {
+      "archivo": "09_12Aug_234140.mp4",
+      "cuando": "2026-08-12T23:41:40+00:00",
+      "segundos": 7.6,
+      "texto": ""
+    },
+    {
+      "archivo": "10_12Aug_234304.mp4",
+      "cuando": "2026-08-12T23:43:04+00:00",
+      "segundos": 6.1,
+      "texto": ""
+    },
+    {
+      "archivo": "11_12Aug_234306.mp4",
+      "cuando": "2026-08-12T23:43:06+00:00",
+      "segundos": 5.8,
+      "texto": ""
+    },
+    {
+      "archivo": "12_12Aug_234308.mp4",
+      "cuando": "2026-08-12T23:43:08+00:00",
+      "segundos": 7.4,
+      "texto": ""
+    },
+    {
+      "archivo": "13_12Aug_234310.mp4",
+      "cuando": "2026-08-12T23:43:10+00:00",
+      "segundos": 13.2,
+      "texto": ""
+    },
+    {
+      "archivo": "14_12Aug_234313.mp4",
+      "cuando": "2026-08-12T23:43:13+00:00",
+      "segundos": 12.5,
+      "texto": ""
+    },
+    {
+      "archivo": "15_12Aug_234317.mp4",
+      "cuando": "2026-08-12T23:43:17+00:00",
+      "segundos": 15.5,
+      "texto": ""
+    },
+    {
+      "archivo": "16_12Aug_234319.mp4",
+      "cuando": "2026-08-12T23:43:19+00:00",
+      "segundos": 9.5,
+      "texto": ""
+    },
+    {
+      "archivo": "17_12Aug_234322.mp4",
+      "cuando": "2026-08-12T23:43:22+00:00",
+      "segundos": 11.6,
+      "texto": ""
+    },
+    {
+      "archivo": "18_12Aug_234327.mp4",
+      "cuando": "2026-08-12T23:43:27+00:00",
+      "segundos": 26.1,
+      "texto": ""
+    },
+    {
+      "archivo": "19_12Aug_234329.mp4",
+      "cuando": "2026-08-12T23:43:29+00:00",
+      "segundos": 8.9,
+      "texto": ""
+    },
+    {
+      "archivo": "20_12Aug_234433.mp4",
+      "cuando": "2026-08-12T23:44:33+00:00",
+      "segundos": 8.0,
+      "texto": ""
+    },
+    {
+      "archivo": "21_12Aug_234438.mp4",
+      "cuando": "2026-08-12T23:44:38+00:00",
+      "segundos": 20.2,
+      "texto": ""
+    },
+    {
+      "archivo": "22_12Aug_234439.mp4",
+      "cuando": "2026-08-12T23:44:39+00:00",
+      "segundos": 2.9,
+      "texto": ""
+    },
+    {
+      "archivo": "23_12Aug_234442.mp4",
+      "cuando": "2026-08-12T23:44:42+00:00",
+      "segundos": 7.8,
+      "texto": ""
+    },
+    {
+      "archivo": "24_12Aug_234444.mp4",
+      "cuando": "2026-08-12T23:44:44+00:00",
+      "segundos": 8.0,
+      "texto": ""
+    },
+    {
+      "archivo": "25_12Aug_234446.mp4",
+      "cuando": "2026-08-12T23:44:46+00:00",
+      "segundos": 6.0,
+      "texto": ""
+    },
+    {
+      "archivo": "26_12Aug_234446.mp4",
+      "cuando": "2026-08-12T23:44:46+00:00",
+      "segundos": 10.4,
+      "texto": ""
+    },
+    {
+      "archivo": "27_12Aug_234448.mp4",
+      "cuando": "2026-08-12T23:44:48+00:00",
+      "segundos": 15.3,
+      "texto": ""
+    },
+    {
+      "archivo": "28_13Aug_045123.mp4",
+      "cuando": "2026-08-13T04:51:23+00:00",
+      "segundos": 4.0,
+      "texto": "Me ayudaste con esta"
+    }
+  ]
+}

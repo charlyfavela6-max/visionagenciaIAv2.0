@@ -1,0 +1,873 @@
+<!--
+  Landing de la Siena — la fuente legible.
+
+  Esto NO se abre directo: los videos, los audios, la foto y las dos tipografias
+  entran como data URI y el archivo que se publica lo arma
+  `_construye_landing_siena.py`, que sustituye cada marca de doble llave por sus bytes.
+  Editar aqui y volver a correr el constructor; nunca editar el HTML de salida.
+
+  De donde sale cada cosa: todo es material que ya existe en clientes/Mariano.
+  Los tiempos que se ven en el margen (0:09, 0:18…) son los reales dentro de
+  mariano_KELSIE_v13.mp4 — la pagina es ese carrete desenrollado, y el tramo de
+  la Siena es literalmente el recorte 9.10s–18.10s de ese video.
+-->
+<title>Siena · San Marino Residencial — tres niveles frente al mar</title>
+<script>
+/* ── Medicion de la Siena ─────────────────────────────────────────────────────
+   Dos cosas distintas, y conviene no confundirlas:
+
+   1. EL PIXEL DE META (el mismo bloque y el mismo ID que sanmarino/). Sirve para
+      que el anuncio aprenda a quien mostrarse. Solo Meta ve esos datos, y solo
+      de quien no trae bloqueador.
+
+   2. LA HUELLA PROPIA -> POST /v/siena. Es la copia de la casa: de que anuncio
+      venia cada quien, cuanto aguanto, hasta donde bajo, si le dio play al
+      recorrido y si acabo escribiendo. Eso el Administrador de eventos no lo
+      contesta.
+
+   Todo va con sendBeacon: se manda en segundo plano y no frena la pagina. Si el
+   servidor no contesta, no pasa nada — la landing no depende de esto.
+
+   OJO: si esta pagina se vuelve a construir con _construye.py, este bloque tiene
+   que seguir vivo en plantilla.html o se pierde en la siguiente pasada.
+   ────────────────────────────────────────────────────────────────────────── */
+(function () {
+  var SLUG = 'siena';
+  var PIXEL_ID = '958321703947192';   // el de Mariano, el mismo de sanmarino/
+
+  /* ---- 1. Pixel de Meta ---- */
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+  (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', PIXEL_ID);
+  fbq('track', 'PageView');
+
+  /* ---- 2. Identidad anonima ----
+     `vid` distingue al mismo celular entre visitas; `ses` distingue esta visita.
+     No hay nombre, correo ni telefono: eso solo llega cuando escriben por
+     WhatsApp, y ahi ya lo tiene el vendedor. */
+  var vid;
+  try {
+    vid = localStorage.getItem('va_vid');
+    if (!vid) { vid = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('va_vid', vid); }
+  } catch (e) { vid = 'sin-almacen'; }
+  var ses = Math.random().toString(36).slice(2);
+
+  var q = new URLSearchParams(location.search);
+  var t0 = Date.now();
+
+  function manda(ev, extra) {
+    var d = {
+      ev: ev, vid: vid, ses: ses,
+      ref: document.referrer || '',
+      utm_source: q.get('utm_source') || '', utm_medium: q.get('utm_medium') || '',
+      utm_campaign: q.get('utm_campaign') || '', utm_content: q.get('utm_content') || '',
+      ad_id: q.get('ad_id') || '', fbclid: q.get('fbclid') || '',
+      pantalla: screen.width + 'x' + screen.height,
+      idioma: navigator.language || '',
+      zona: (Intl.DateTimeFormat().resolvedOptions().timeZone) || '',
+      seg: Math.round((Date.now() - t0) / 1000)
+    };
+    for (var k in extra) d[k] = extra[k];
+    try {
+      var blob = new Blob([JSON.stringify(d)], { type: 'application/json' });
+      if (!navigator.sendBeacon('/v/' + SLUG, blob)) throw 0;
+    } catch (e) {
+      // Safari viejo y algun navegador dentro de apps no traen sendBeacon.
+      try { fetch('/v/' + SLUG, { method: 'POST', body: JSON.stringify(d), headers: { 'Content-Type': 'application/json' }, keepalive: true }); } catch (e2) {}
+    }
+  }
+
+  manda('entra');
+
+  /* ---- 3. Hasta donde bajaron ----
+     Se avisa una sola vez por escalon. Sin esto son cientos de eventos por
+     visita y la lista de Redis se llena con basura. */
+  var hitos = [25, 50, 75, 100], vistos = {};
+  function mideScroll() {
+    var alto = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = alto > 0 ? Math.min(100, Math.round((window.scrollY / alto) * 100)) : 100;
+    for (var i = 0; i < hitos.length; i++) {
+      if (pct >= hitos[i] && !vistos[hitos[i]]) { vistos[hitos[i]] = 1; manda('scroll', { pct: hitos[i] }); }
+    }
+  }
+  addEventListener('scroll', function () {
+    // Un cuadro de espera: en el scroll del recorrido esto se dispararia 60
+    // veces por segundo.
+    if (mideScroll.pendiente) return;
+    mideScroll.pendiente = setTimeout(function () { mideScroll.pendiente = null; mideScroll(); }, 250);
+  }, { passive: true });
+
+  /* ---- 4. Cuanto aguantaron ---- */
+  [10, 30, 60, 120].forEach(function (s) { setTimeout(function () { manda('tiempo', { seg: s }); }, s * 1000); });
+
+  /* ---- 5. El recorrido ----
+     La Siena avanza sus videos con el dedo, asi que el `play` no siempre llega.
+     Se escucha igual, y el scroll de arriba cubre lo demas. */
+  document.addEventListener('play', function (ev) {
+    var v = ev.target;
+    if (v && v.tagName === 'VIDEO' && !v.dataset.vaVisto) {
+      v.dataset.vaVisto = '1';
+      manda('video', { det: (v.getAttribute('data-nombre') || v.currentSrc || '').slice(-40) });
+    }
+  }, true);
+
+  /* ---- 6. El unico paso de conversion: salir a WhatsApp o marcar ---- */
+  document.addEventListener('click', function (ev) {
+    var a = ev.target.closest && ev.target.closest('a[href*="wa.me"], a[href^="https://api.whatsapp.com"], a[href^="tel:"]');
+    if (!a) return;
+    var tipo = a.getAttribute('href').indexOf('tel:') === 0 ? 'llamada' : 'whatsapp';
+    if (window.fbq) { fbq('track', 'Lead'); fbq('track', 'Contact'); }
+    manda('contacto', { det: tipo });
+  }, true);
+
+  /* ---- 7. El cierre ----
+     Con esto se sabe el tiempo real de la visita, no solo el ultimo hito.
+     `visibilitychange` es el unico que dispara confiable en celular; el
+     `beforeunload` de escritorio no llega en iOS. */
+  var cerrado = false;
+  function cierra() { if (cerrado) return; cerrado = true; mideScroll(); manda('sale'); }
+  addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') cierra(); });
+  addEventListener('pagehide', cierra);
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Siena: casa de tres niveles en San Marino Residencial, carretera Tijuana–Rosarito. Desde $4.4 MDP. Agenda tu visita con Mariano.">
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   El color sale del cuadro, no de una paleta de moda: en el video
+   de la casa el mediodia de Baja quema el estuco a blanco frio y
+   deja el cielo en cobalto puro; las sombras del concreto se van a
+   azul, nunca a cafe. Por eso el neutro esta sesgado a azul y el
+   unico color saturado de la pagina es ese cielo. El naranja
+   aparece una sola vez, en la linea de urgencia, porque es lo unico
+   que dice algo distinto ("esto se acaba").
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --cal:#eef1f6;        /* estuco al sol, frio */
+  --losa:#ffffff;       /* panel */
+  --borde:#d5dae4;
+  --tinta:#101623;      /* casi negro con sesgo azul */
+  --tinta-2:#5c6779;
+  --concreto:#8b95a7;
+  --cobalto:#0b3fa8;    /* el cielo del video. El acento, uno por pantalla */
+  --cobalto-piso:#e6ecfa;
+  --brasa:#b83c14;      /* solo la urgencia */
+  --sombra:0 1px 2px rgba(16,22,35,.05), 0 18px 44px rgba(16,22,35,.10);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cal:#0b0f17; --losa:#151b27; --borde:#242c3b;
+    --tinta:#eef2f9; --tinta-2:#a2adc0; --concreto:#78839a;
+    --cobalto:#78a8ff; --cobalto-piso:#16243f;
+    --brasa:#ff8a5c;
+    --sombra:0 1px 0 rgba(255,255,255,.04), 0 18px 44px rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="dark"] {
+  --cal:#0b0f17; --losa:#151b27; --borde:#242c3b;
+  --tinta:#eef2f9; --tinta-2:#a2adc0; --concreto:#78839a;
+  --cobalto:#78a8ff; --cobalto-piso:#16243f;
+  --brasa:#ff8a5c;
+  --sombra:0 1px 0 rgba(255,255,255,.04), 0 18px 44px rgba(0,0,0,.55);
+}
+
+/* La misma Nimbus Sans Narrow Bold que llevan quemada los titulares de sus
+   videos. La pagina habla con la letra de la campaña, no con otra. */
+@font-face {
+  font-family:'Estrecha'; font-style:normal; font-weight:700; font-display:swap;
+  src:url("{{narrow-Bold.woff2}}") format('woff2');
+}
+@font-face {
+  font-family:'Estrecha'; font-style:normal; font-weight:400; font-display:swap;
+  src:url("{{narrow-Regular.woff2}}") format('woff2');
+}
+
+*,*::before,*::after { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0; background:var(--cal); color:var(--tinta);
+  font:400 17px/1.62 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+img,video { display:block; max-width:100%; }
+a { color:inherit; }
+:focus-visible { outline:3px solid var(--cobalto); outline-offset:3px; border-radius:3px; }
+@media (prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto; }
+  *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+.display { font-family:'Estrecha',system-ui,sans-serif; font-weight:700;
+           letter-spacing:-.005em; line-height:.98; text-wrap:balance; }
+.marca  { font-family:'Estrecha',system-ui,sans-serif; font-weight:400;
+          text-transform:uppercase; letter-spacing:.19em; font-size:12px;
+          color:var(--concreto); }
+.cifra  { font-family:'Estrecha',system-ui,sans-serif; font-weight:700;
+          font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+
+.caja { width:min(100% - 40px, 1120px); margin-inline:auto; }
+.prosa { max-width:62ch; }
+
+/* ── El carrete: barra de tiempos pegada al margen ───────────────
+   No es adorno numerado. Cada marca es el segundo real donde eso se
+   dice dentro de mariano_KELSIE_v13.mp4 (36.6s). */
+.carrete {
+  position:fixed; left:26px; top:50%; translate:0 -50%; z-index:40;
+  display:flex; flex-direction:column; gap:12px; padding:14px 12px;
+  background:color-mix(in srgb, var(--losa) 82%, transparent);
+  border:1px solid var(--borde); border-radius:999px;
+  backdrop-filter:blur(10px);
+}
+.carrete a {
+  font-family:'Estrecha',system-ui,sans-serif; font-variant-numeric:tabular-nums;
+  font-size:11px; letter-spacing:.08em; color:var(--concreto);
+  text-decoration:none; display:flex; align-items:center; gap:8px;
+  transition:color .25s;
+}
+.carrete a::before {
+  content:''; width:9px; height:2px; background:currentColor; border-radius:2px;
+  transition:width .25s, background .25s;
+}
+.carrete a[aria-current="true"] { color:var(--cobalto); }
+.carrete a[aria-current="true"]::before { width:20px; }
+@media (max-width:1180px) { .carrete { display:none; } }
+
+/* El boton de la musica. Abajo a la derecha, donde cae el pulgar, y por encima
+   de todo menos de la lupa. Apagado se ve tenue; sonando se enciende y late. */
+.son {
+  position:fixed; right:18px; bottom:18px; z-index:45;
+  width:42px; height:42px; border-radius:999px; cursor:pointer;
+  font-size:16px; line-height:1; color:var(--concreto);
+  background:color-mix(in srgb, var(--losa) 86%, transparent);
+  border:1px solid var(--borde); backdrop-filter:blur(10px);
+  transition:color .3s, border-color .3s, opacity .3s;
+}
+.son[aria-pressed="true"] { color:var(--cobalto); border-color:var(--cobalto); }
+
+/* ── El boton de entrada ─────────────────────────────────────
+   Ningun navegador deja que una pagina suene sola: la musica necesita que el
+   visitante toque algo. En vez de pelear contra eso o de poner un avisito
+   pidiendo un favor, el toque se convierte en la puerta de entrada — se toca
+   para empezar el recorrido, y de paso arranca la musica.
+
+   Va DEBAJO del precio y no encima del hero: la portada es la casa, y taparla
+   con un velo para pedir permiso es cambiar lo unico que engancha por un
+   tramite. */
+.entrar {
+  display:inline-flex; align-items:center; gap:12px; margin-top:22px;
+  padding:15px 26px 15px 20px; border-radius:999px; cursor:pointer;
+  background:rgba(255,255,255,.94); color:#101410; border:0;
+  font-family:'Estrecha',system-ui,sans-serif; font-weight:700; font-size:19px;
+  letter-spacing:.01em; backdrop-filter:blur(6px);
+  transition:transform .18s, box-shadow .18s, opacity .4s;
+  box-shadow:0 10px 30px rgba(0,0,0,.28);
+}
+.entrar:hover { transform:translateY(-2px); box-shadow:0 16px 40px rgba(0,0,0,.36); }
+.entrar svg { width:22px; height:22px; fill:currentColor; flex:none; }
+.entrar small { display:block; font-family:system-ui,sans-serif; font-weight:400;
+                font-size:11.5px; letter-spacing:.06em; opacity:.6; margin-top:2px; }
+.entrar.usado { opacity:0; pointer-events:none; }
+
+.son[aria-pressed="true"]::after {
+  content:''; position:absolute; inset:-4px; border-radius:999px;
+  border:1px solid var(--cobalto); opacity:.5; animation:late 2.6s ease-out infinite;
+}
+@keyframes late { from { transform:scale(.92); opacity:.5 } to { transform:scale(1.15); opacity:0 } }
+@media (prefers-reduced-motion:reduce) { .son[aria-pressed="true"]::after { animation:none } }
+
+/* ── Portada ─────────────────────────────────────────────────── */
+.portada { position:relative; min-height:100svh; display:grid; align-items:end;
+           overflow:hidden; background:#0a1220; }
+.portada video, .portada img.poster {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+}
+.portada .velo {
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(7,12,22,.55) 0%, rgba(7,12,22,.16) 28%,
+              rgba(7,12,22,.74) 64%, rgba(5,9,16,.96) 100%);
+}
+.portada .caja { position:relative; padding-block:0 clamp(34px,7vh,72px); color:#fff; }
+.portada .marca { color:rgba(255,255,255,.76); }
+.portada h1 { margin:14px 0 0; font-size:clamp(80px,20vw,220px); color:#fff; }
+.portada .bajada { margin:10px 0 0; font-size:clamp(19px,2.4vw,26px);
+                   color:rgba(255,255,255,.9); max-width:22ch; text-wrap:balance; }
+.etiqueta-precio {
+  display:inline-flex; align-items:baseline; gap:10px; margin-top:26px;
+  padding:9px 18px 10px; border-radius:999px;
+  background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.26);
+  backdrop-filter:blur(6px);
+}
+.etiqueta-precio .marca { color:rgba(255,255,255,.7); }
+.etiqueta-precio .cifra { font-size:27px; color:#fff; }
+.pista { position:absolute; left:50%; bottom:14px; translate:-50% 0;
+         width:1px; height:34px; background:linear-gradient(180deg,transparent,rgba(255,255,255,.8)); }
+
+/* ── El recorrido ─────────────────────────────────────────────
+   Cada cuarto ocupa la pantalla ENTERA y se queda pegado mientras su bloque
+   pasa: por eso bajar se siente como caminar y no como leer una ficha. 170vh
+   por paso — con 100vh el video se iria antes de terminar, y con 300 se haria
+   eterno. */
+.recorrido { border-top:1px solid var(--borde); background:#05080f; }
+.recorrido .intro { padding-block:clamp(64px,11vh,124px) clamp(28px,5vh,54px); color:var(--cal); }
+.recorrido .intro h2, .recorrido .intro .prosa { color:#eef2f9; }
+.paso { height:170vh; position:relative; }
+.fijo { position:sticky; top:0; height:100svh; overflow:hidden; }
+.fijo video { width:100%; height:100%; object-fit:cover; background:#05080f; }
+/* El rotulo se lee sobre cualquier cuadro: el degradado lo sostiene sin tapar
+   el cuarto, que es lo que la persona vino a ver. */
+.fijo::after {
+  content:''; position:absolute; inset:auto 0 0 0; height:42%; pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(4,7,13,.86));
+}
+.rotulo {
+  /* z-index 2: el degradado de `.fijo::after` es un pseudoelemento y se pinta
+     DESPUES del span, asi que sin esto el velo queda encima del texto y el
+     rotulo se ve lavado justo sobre los cuartos claros. */
+  z-index:2;
+  position:absolute; left:clamp(20px,5vw,64px); bottom:clamp(26px,7vh,70px); right:clamp(20px,5vw,64px);
+  color:#fff; font-size:clamp(15px,1.7vw,18px); max-width:34ch; text-shadow:0 1px 12px rgba(0,0,0,.6);
+}
+.rotulo b {
+  display:block; font-family:'Estrecha',system-ui,sans-serif; font-weight:700;
+  font-size:clamp(32px,5.4vw,58px); line-height:1; margin-bottom:10px; letter-spacing:-.01em;
+}
+
+/* ── Secciones ───────────────────────────────────────────────── */
+.tramo { padding-block:clamp(64px,11vh,124px); border-top:1px solid var(--borde); }
+.tramo:first-of-type { border-top:0; }
+.encabezado { margin-bottom:26px; }
+.encabezado .tiempo { margin-bottom:14px; }
+.tiempo {
+  font-family:'Estrecha',system-ui,sans-serif; font-variant-numeric:tabular-nums;
+  font-size:12px; letter-spacing:.1em; color:var(--cobalto);
+  padding:4px 10px 3px; border:1px solid var(--cobalto); border-radius:999px;
+  display:inline-block;
+}
+h2.display { margin:0; font-size:clamp(38px,6.4vw,72px); }
+h3.display { margin:0; font-size:clamp(25px,3.4vw,34px); }
+
+/* Rejilla: el video se queda quieto mientras el texto pasa. En movil se apila
+   y el video va primero, que es lo que la gente ve sin leer nada. */
+.dupla { display:grid; gap:clamp(26px,4vw,54px); align-items:start; }
+@media (min-width:900px) {
+  .dupla { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  .dupla > .pantalla { position:sticky; top:calc(50vh - 27vh); }
+  .dupla.invertida > .pantalla { order:2; }
+}
+.pantalla { margin:0; }
+.pantalla video, .pantalla img {
+  width:100%; border-radius:16px; background:#0a1220;
+  box-shadow:var(--sombra); border:1px solid var(--borde);
+}
+.pantalla .pie { margin-top:10px; font-size:13px; color:var(--concreto); }
+.vertical video, .vertical img { aspect-ratio:9/16; object-fit:cover; max-height:76vh; margin-inline:auto; width:auto; }
+
+.puntos { list-style:none; margin:26px 0 0; padding:0; display:grid; gap:0; }
+.puntos li { display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:baseline;
+             padding:16px 0; border-top:1px solid var(--borde); }
+.puntos li:last-child { border-bottom:1px solid var(--borde); }
+.puntos b { font-family:'Estrecha',system-ui,sans-serif; font-weight:700; font-size:19px; }
+.puntos span { color:var(--tinta-2); font-size:15.5px; }
+.puntos .n { font-family:'Estrecha',system-ui,sans-serif; font-variant-numeric:tabular-nums;
+             color:var(--cobalto); font-size:14px; letter-spacing:.06em; }
+
+.precio-grande { margin-top:34px; padding-top:22px; border-top:2px solid var(--tinta); }
+.precio-grande .cifra { display:block; font-size:clamp(56px,9vw,104px); line-height:.92; }
+.precio-grande .marca { display:block; margin-top:8px; }
+
+.urgencia {
+  margin:30px 0 0; padding:20px 22px; border-left:4px solid var(--brasa);
+  background:color-mix(in srgb, var(--brasa) 8%, transparent);
+  font-size:clamp(19px,2.5vw,25px); line-height:1.34; text-wrap:balance;
+}
+.urgencia em { font-style:normal; color:var(--brasa); }
+
+/* ── Los otros dos modelos ───────────────────────────────────── */
+.modelos { display:grid; gap:18px; margin-top:12px; }
+@media (min-width:760px) { .modelos { grid-template-columns:1fr 1fr; } }
+.modelo { padding:26px; background:var(--losa); border:1px solid var(--borde);
+          border-radius:16px; box-shadow:var(--sombra); }
+.modelo p { margin:10px 0 20px; color:var(--tinta-2); font-size:15.5px; }
+.modelo .cifra { font-size:40px; }
+
+/* ── Cierre ──────────────────────────────────────────────────── */
+/* El cierre se queda oscuro en los dos temas: es el endcard del video, que es
+   oscuro, y encima va el boton blanco. Colores literales a proposito — no son
+   del juego de tokens porque no cambian con el tema. */
+.cierre { background:#0a111d; color:#e9eef7; border-top:0; }
+.cierre .marca { color:rgba(233,238,247,.58); }
+.cierre h2 { color:#fff; }
+.cierre p { color:rgba(233,238,247,.8); }
+.boton {
+  display:inline-flex; align-items:center; gap:12px; margin-top:26px;
+  padding:17px 30px; border-radius:999px; background:#fff; color:#0d1420;
+  font-family:'Estrecha',system-ui,sans-serif; font-weight:700; font-size:21px;
+  letter-spacing:.01em; text-decoration:none; transition:transform .18s, box-shadow .18s;
+}
+.boton:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(0,0,0,.35); }
+.boton svg { width:20px; height:20px; fill:currentColor; }
+.creditos { padding:24px 0 40px; font-size:13px; color:var(--concreto);
+            border-top:1px solid var(--borde); }
+
+/* Aparecer al entrar. Discreto: sube 14px y aclara, nada mas. */
+.aparece { opacity:0; transform:translateY(14px); transition:opacity .7s ease, transform .7s ease; }
+.aparece.visto { opacity:1; transform:none; }
+@media (prefers-reduced-motion:reduce) { .aparece { opacity:1; transform:none; } }
+</style>
+
+<nav class="carrete" aria-label="Tramos del video">
+  <!-- El recorrido va primero desde el 2026-08-11: la portada acaba en la
+       puerta, asi que lo que sigue tiene que ser entrar. El texto —los tiempos
+       del video— viene despues, cuando ya se vio la casa. -->
+  <a href="#recorrido" data-carrete="recorrido">camina</a>
+  <a href="#gancho"  data-carrete="gancho">0:00</a>
+  <a href="#siena"   data-carrete="siena">0:09</a>
+  <a href="#dentro"  data-carrete="dentro">por dentro</a>
+  <a href="#otros"   data-carrete="otros">0:18</a>
+  <a href="#visita"  data-carrete="visita">0:33</a>
+</nav>
+
+<!-- El boton de la musica va SUELTO y no dentro del carrete: el carrete se
+     esconde abajo de 1180px y en el celular —que es donde se ve esta pagina— no
+     habria manera de callarla. -->
+<button id="son" class="son" aria-pressed="false" title="Música de fondo">♪</button>
+
+<!-- La cama de musica. `loop` de verdad: el archivo se corta con la cola cruzada
+     sobre la cabeza, asi que la vuelta no se oye. -->
+<audio id="cama" src="{{cama.mp3}}" loop preload="auto"></audio>
+
+<header class="portada">
+  <video src="{{casa.mp4}}" poster="{{casa_poster.jpg}}" muted loop autoplay playsinline preload="auto"
+         aria-label="La casa Siena vista desde la calle, con el mar al fondo"></video>
+  <div class="velo"></div>
+  <div class="caja">
+    <p class="marca">San Marino Residencial · carretera Tijuana&ndash;Rosarito</p>
+    <h1 class="display">Siena</h1>
+    <p class="bajada">Tres niveles, y el mar al final de la calle.</p>
+    <p class="etiqueta-precio"><span class="marca">desde</span><span class="cifra">$4.4 MDP</span></p>
+    <button class="entrar" onclick="entra(this)">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      <span>Ver la casa<small>con sonido</small></span>
+    </button>
+  </div>
+  <div class="pista" aria-hidden="true"></div>
+</header>
+
+<main>
+
+  <!-- El recorrido ─────────────────────────────────────────────
+       Seis videos de la casa muestra, encadenados en el orden en que se camina:
+       se entra, se ve la sala, se sube, las dos recamaras, y se sale a la
+       terraza. Cada uno ocupa la pantalla entera y avanza con el dedo, asi que
+       bajar ES caminar. -->
+  <section class="recorrido" id="recorrido">
+    <div class="caja intro">
+      <div class="encabezado"><h2 class="display aparece">Camina la casa</h2></div>
+      <p class="prosa">Esto es la casa muestra, filmada tal cual. Baja despacio: el
+        recorrido avanza contigo, y si te regresas, se regresa.</p>
+    </div>
+
+    <div class="paso"><div class="fijo">
+      <video data-scroll data-paso src="{{rec1.mp4}}" muted playsinline preload="auto"
+             aria-label="La entrada, con el pasillo hacia la sala"></video>
+      <span class="rotulo"><b>La entrada</b>El pasillo abre directo a la sala.</span>
+    </div></div>
+
+    <div class="paso"><div class="fijo">
+      <video data-scroll data-paso src="{{rec2.mp4}}" muted playsinline preload="auto"
+             aria-label="La sala y el comedor"></video>
+      <span class="rotulo"><b>Sala y comedor</b>Un solo espacio, sin muros que lo partan.</span>
+    </div></div>
+
+    <div class="paso"><div class="fijo">
+      <video data-scroll data-paso src="{{rec3.mp4}}" muted playsinline preload="auto"
+             aria-label="La escalera abierta, con doble altura"></video>
+      <span class="rotulo"><b>La escalera</b>Abierta y a doble altura: por eso la casa se ve grande desde que entras.</span>
+    </div></div>
+
+    <div class="paso"><div class="fijo">
+      <video data-scroll data-paso src="{{rec4.mp4}}" muted playsinline preload="auto"
+             aria-label="La recamara principal"></video>
+      <span class="rotulo"><b>La recámara principal</b>Arriba, con su ventanal.</span>
+    </div></div>
+
+    <div class="paso"><div class="fijo">
+      <video data-scroll data-paso src="{{rec5.mp4}}" muted playsinline preload="auto"
+             aria-label="La segunda recamara, con ventanal de piso a techo"></video>
+      <span class="rotulo"><b>La segunda recámara</b>Piso a techo. Entra luz todo el día sin prender nada.</span>
+    </div></div>
+
+    <div class="paso"><div class="fijo">
+      <video data-scroll data-paso src="{{rec6.mp4}}" muted playsinline preload="auto"
+             aria-label="La terraza"></video>
+      <span class="rotulo"><b>La terraza</b>El tercer nivel, libre para lo que decidas.</span>
+    </div></div>
+  </section>
+  <!-- 0:00 ─────────────────────────────────────────────────── -->
+  <section class="tramo" id="gancho">
+    <div class="caja dupla invertida">
+      <figure class="pantalla">
+        <video data-scroll src="{{kling.mp4}}" poster="{{kling_poster.jpg}}" muted playsinline preload="auto"
+               aria-label="Recorrido corto del frente de la casa"></video>
+        <figcaption class="pie">La etapa que se está vendiendo ahora.</figcaption>
+      </figure>
+      <div>
+        <div class="encabezado"><span class="tiempo">0:00</span><h2 class="display aparece">Todos buscan casa nueva pensando que hay tiempo de sobra</h2></div>
+        <p class="prosa">San Marino ya está habitado: calles con gente, privada con acceso
+          controlado, y la playa de Rosarito a quince minutos por la carretera. Lo que
+          queda de esta etapa son casas terminadas, no planos.</p>
+        <p class="urgencia"><em>El precio de esta etapa</em> no va a seguir igual el mes que entra.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 0:09 ─────────────────────────────────────────────────── -->
+  <section class="tramo" id="siena">
+    <div class="caja dupla">
+      <figure class="pantalla vertical">
+        <video src="{{siena.mp4}}" poster="{{siena_poster.jpg}}" loop playsinline preload="none" controls
+               aria-label="Mariano presenta la Siena; nueve segundos del video de campaña"></video>
+        <figcaption class="pie">El tramo de la Siena, tal cual salió al aire — 0:09 a 0:18. Dale play para oírlo.</figcaption>
+      </figure>
+      <div>
+        <div class="encabezado"><span class="tiempo">0:09</span><h2 class="display aparece">Siena</h2></div>
+        <p class="prosa">La casa que abre el video. Tres pisos sobre un lote de esquina, con la
+          fachada al oriente para que el sol de la tarde pegue en la terraza y no en la sala.</p>
+        <ul class="puntos">
+          <li><span class="n">01</span><div><b>Tres niveles</b><br><span>Planta baja social, recámaras arriba, y el tercer nivel libre para lo que decidas.</span></div></li>
+          <li><span class="n">02</span><div><b>Recámaras con ventanal</b><br><span>Piso a techo. Entra luz todo el día sin prender nada.</span></div></li>
+          <li><span class="n">03</span><div><b>Escalera abierta</b><br><span>Sin muro que la encierre: la casa se ve grande desde que entras.</span></div></li>
+        </ul>
+        <p class="precio-grande"><span class="cifra">$4,400,000</span><span class="marca">pesos · precio desde, esta etapa</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Por dentro ───────────────────────────────────────────── -->
+  <section class="tramo" id="dentro">
+    <div class="caja dupla invertida">
+      <figure class="pantalla">
+        <video data-scroll src="{{flyer.mp4}}" poster="{{flyer_poster.jpg}}" muted playsinline preload="auto"
+               aria-label="Interiores de la casa: sala, recámara y fachada"></video>
+        <figcaption class="pie">Sala, recámara y fachada de la casa muestra.</figcaption>
+      </figure>
+      <div>
+        <div class="encabezado"><h2 class="display aparece">Por dentro y por fuera</h2></div>
+        <p class="prosa">Se entrega terminada: pisos puestos, cocina instalada, baños completos.
+          No hay obra pendiente ni sorpresa de acabados a medias.</p>
+        <ul class="puntos">
+          <li><span class="n">✓</span><div><b>Lista para mudarte</b><br><span>Terminada y entregada, no en obra.</span></div></li>
+          <li><span class="n">✓</span><div><b>Privada con acceso controlado</b><br><span>Calles internas donde los niños pueden salir.</span></div></li>
+          <li><span class="n">✓</span><div><b>El trámite lo llevamos juntos</b><br><span>Crédito, papeleo y escrituración. No lo haces solo.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 0:18 y 0:26 ──────────────────────────────────────────── -->
+  <section class="tramo" id="otros">
+    <div class="caja">
+      <div class="encabezado"><span class="tiempo">0:18</span><h2 class="display aparece">Y si la Siena no es la tuya</h2></div>
+      <p class="prosa">En la misma etapa hay otros dos modelos. Los tres se ven el mismo día,
+        en la misma visita.</p>
+      <div class="modelos">
+        <article class="modelo">
+          <h3 class="display">Catania</h3>
+          <p>Terraza en azotea y ventanales con vista abierta.</p>
+          <p class="marca" style="margin:0">desde</p><p class="cifra" style="margin:2px 0 0">$5.0 MDP</p>
+        </article>
+        <article class="modelo">
+          <h3 class="display">Brescia</h3>
+          <p>Sala amplia, terraza propia y recámara con vista.</p>
+          <p class="marca" style="margin:0">desde</p><p class="cifra" style="margin:2px 0 0">$3.8 MDP</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- La seccion "Escuchalo completo" —los seis tramos de la locucion sueltos—
+       se quito el 2026-08-11. Era material de produccion metido en una pagina de
+       venta: quien entra a ver una casa no viene a oir el guion despiezado. Con
+       ella se fueron los seis mp3, que eran la mitad del peso del archivo. -->
+
+  <!-- La seccion "Quien te enseña la casa" se quito el 2026-08-11.
+       Llevaba `stride.jpg`, que es un cuadro GENERADO para los videos: sirve
+       para que camine tres segundos, pero puesto en grande y quieto no es
+       Mariano, y en la pagina donde el cliente decide a quien le habla, una
+       cara que no es la suya cuesta mas que la seccion entera. Vuelve cuando
+       haya una foto real suya.
+       Su telefono y su horario NO se fueron con ella: se mudaron al cierre. -->
+
+  <!-- 0:33 ─────────────────────────────────────────────────── -->
+  <section class="tramo cierre" id="visita">
+    <div class="caja dupla">
+      <figure class="pantalla vertical">
+        <video data-scroll src="{{endcard.mp4}}" poster="{{endcard_poster.jpg}}" muted playsinline preload="auto"
+               aria-label="Cierre del video con los datos de contacto"></video>
+      </figure>
+      <div>
+        <p class="marca">0:33 · el cierre</p>
+        <h2 class="display" style="margin:12px 0 0">Ven a verlas este fin de semana</h2>
+        <p style="margin-top:14px">Escríbeme y te digo qué días hay visita. Sin compromiso
+          y sin que te ande persiguiendo después.</p>
+        <a class="boton" href="https://wa.me/5216642334848?text=Hola%20Mariano%2C%20vi%20la%20p%C3%A1gina%20de%20la%20Siena%20y%20quiero%20agendar%20una%20visita">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.8-.6-3.1-1.3-5.1-4.4-5.3-4.6-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .5-.1.7.5l1 2.4c.1.2.1.4 0 .6l-.4.6-.3.3c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.2 1.4 2.5 1.5.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.2 1c.2.1.4.2.5.3.1.2.1.7-.1 1.4z"/></svg>
+          Agendar por WhatsApp
+        </a>
+        <a class="telefono" href="tel:+526642334848">664 233 4848</a>
+        <p class="marca" style="margin:4px 0 0">Mariano · visitas de lunes a sábado, de 9 a 6</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="caja creditos">San Marino Residencial · Entre Tijuana y Rosarito, Baja California.
+    Precios de la etapa vigente, sujetos a cambio sin previo aviso.</p>
+</main>
+
+<script>
+/* El reproductor de los seis tramos de locucion se fue con su seccion el
+   2026-08-11, y con el `callarVideos`: ya no hay dos audios que puedan pisarse,
+   porque el unico con voz que queda es el video de la Siena. */
+
+/* ── Los videos AVANZAN CON EL DEDO ───────────────────────────
+   Peticion de Carlos: que corran solo mientras uno va bajando. No es un adorno
+   — cambia quien manda. Un video que se reproduce solo va a su ritmo y hay que
+   esperarlo; asi el que mira lleva el paso, puede detenerse en un cuadro, y si
+   sube, el video se regresa. Es el recorrido de la casa, no un anuncio corriendo.
+
+   Como: nada de play(). Se pone `currentTime` a mano segun donde esta el video
+   dentro de la ventana. Se lee en `scroll` pero se ESCRIBE dentro de
+   requestAnimationFrame, que es cuando el navegador va a pintar; buscarlo en
+   cada evento de scroll da tirones en el celular.
+
+   Los data URI hacen que esto funcione: el archivo ya esta entero en memoria,
+   asi que buscar un cuadro es instantaneo. Con un video servido por red, cada
+   salto pediria un trozo al servidor y se veria a golpes.
+
+   Dos videos quedan FUERA de esto: el de la Siena, que lleva voz —una voz que
+   corre segun lo rapido que muevas el dedo no se entiende, y ese se toca con su
+   boton—, y el de la portada, que es el fondo del hero: ahi todavia nadie ha
+   bajado nada, y un fondo congelado hace que la pagina parezca rota. */
+const porScroll = [...document.querySelectorAll('video[data-scroll]')];
+let pedido = false;
+
+/* Cuanto mas rapido corre el video que el dedo. Con 1 el clip tarda todo su
+   trayecto en correr y se siente pesado: hay que barrer pantalla y media para
+   ver cuatro segundos. Con 2.2 el mismo clip cabe en menos de media pantalla de
+   scroll, que es lo que hace que responda al tiro.
+   Va centrado a proposito: el cuadro de en medio del video sigue cayendo cuando
+   el video esta en medio de la pantalla, asi que lo que cambia es la VELOCIDAD,
+   no donde empieza ni donde acaba. */
+const VELOZ = 2.2;
+
+function avanzaConScroll() {
+  pedido = false;
+  const alto = window.innerHeight;
+  for (const v of porScroll) {
+    if (!v.duration || Number.isNaN(v.duration)) continue;    // aun sin metadatos
+    let p;
+
+    if (v.dataset.paso !== undefined) {
+      /* Los del recorrido: el progreso sale del BLOQUE, que mide 170vh. El video
+         se queda pegado llenando la pantalla mientras el bloque pasa, asi que
+         bajar una pantalla y media camina ese cuarto de principio a fin. */
+      const b = v.closest('.paso').getBoundingClientRect();
+      const largo = b.height - alto;
+      if (b.bottom < -100 || b.top > alto + 100) continue;
+      p = largo > 0 ? -b.top / largo : 0;
+    } else {
+      /* Los demas: terminan cuando su parte de arriba llega al borde superior,
+         o sea en UNA pantalla de scroll y no en dos.
+         Antes se repartia la duracion por todo el trayecto del video por la
+         pantalla —desde que asomaba abajo hasta que desaparecia arriba— y eso
+         son ~2 pantallas: el video se arrastraba y parecia trabado. */
+      const r = v.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > alto + 200) continue;
+      p = (alto - r.top) / alto;
+    }
+
+    p = Math.min(1, Math.max(0, (p - 0.5) * VELOZ + 0.5));
+    apunta(v, p * (v.duration - 0.05));
+  }
+}
+
+/* Buscar un cuadro no es instantaneo, y si mientras el navegador esta buscando
+   uno se le encima otro, se van encolando: el video termina pintando cuadros de
+   donde el dedo estaba hace medio segundo. Por eso solo se pide UNA busqueda a
+   la vez y se guarda a donde hay que ir; al terminar, si el objetivo ya se
+   movio, se salta directo al ultimo. Nunca se pinta una posicion vieja. */
+function apunta(v, t) {
+  v._meta = t;
+  if (v.seeking) return;
+  if (Math.abs(v.currentTime - t) < 0.02) return;
+  // fastSeek va al keyframe mas cercano sin decodificar de mas: es mas barato y
+  // con los keyframes densos del build cae practicamente en el cuadro exacto.
+  if (v.fastSeek) v.fastSeek(t); else v.currentTime = t;
+}
+
+for (const v of porScroll) {
+  v.addEventListener('seeked', () => {
+    const t = v._meta;
+    if (t !== undefined && Math.abs(v.currentTime - t) > 0.02) apunta(v, t);
+  });
+}
+
+function pideAvance() {
+  if (pedido) return;
+  pedido = true;
+  requestAnimationFrame(avanzaConScroll);
+}
+
+addEventListener('scroll', pideAvance, { passive: true });
+addEventListener('resize', pideAvance);
+for (const v of porScroll) {
+  v.pause();
+  // `loadedmetadata` es el primer momento en que `duration` existe y se puede
+  // buscar; antes de eso, poner currentTime no hace nada y el video se queda
+  // clavado en el primer cuadro.
+  v.addEventListener('loadedmetadata', pideAvance, { once: true });
+  if (v.readyState >= 1) pideAvance();
+}
+pideAvance();
+
+/* ── La cama de musica ────────────────────────────────────────
+   Va bajita a proposito (-26 dBFS en el archivo, y aqui al 55%): tiene que
+   notarse que hay musica, no QUE musica.
+
+   Tres cosas que no son obvias:
+
+   1. Ningun navegador deja que una pagina suene sola. `play()` al cargar se
+      rechaza, asi que se deja armado un disparo para el primer toque de verdad
+      —click o tecla; el scroll NO cuenta como gesto para Chrome—. Si el
+      navegador si deja, arranca ahi mismo.
+   2. El volumen sube a mano en vez de venir horneado en el mp3: si el fundido
+      fuera parte del archivo se oiria en cada vuelta del loop.
+   3. Cuando Mariano habla —el video de la Siena es el unico con voz— la musica
+      se agacha al 15%. Dos voces al mismo tiempo no se entienden, y bajarla es
+      mejor que cortarla: cortarla se nota mas que dejarla debajo. */
+const cama = document.getElementById('cama');
+const boton = document.getElementById('son');
+const CAMA_ALTO = 0.55;
+const CAMA_BAJO = 0.09;      // agachada mientras habla
+let apagada = false;         // solo si el visitante la apago a mano
+
+cama.volume = 0;
+
+function rampa(hasta, ms = 900) {
+  const desde = cama.volume;
+  const t0 = performance.now();
+  (function paso(t) {
+    const k = Math.min(1, (t - t0) / ms);
+    cama.volume = Math.max(0, Math.min(1, desde + (hasta - desde) * k));
+    if (k < 1) requestAnimationFrame(paso);
+  })(t0);
+}
+
+function suena() { return !cama.paused && !apagada; }
+
+/* Los que traen voz. Hoy es solo el de la Siena, pero se engancha a TODOS los
+   que llevan controles: si mañana se agrega otro, ya queda.
+   Va ANTES de `prende` porque prende consulta si alguien esta hablando. */
+const conVoz = [...document.querySelectorAll('video[controls]')];
+const hablando = () => conVoz.some((v) => !v.paused && !v.muted && !v.ended);
+
+function prende() {
+  if (apagada) return;
+  cama.play().then(() => {
+    boton.setAttribute('aria-pressed', 'true');
+    rampa(hablando() ? CAMA_BAJO : CAMA_ALTO, 2500);   // entra con calma
+  }).catch(() => { /* el navegador aun no deja; se reintenta al primer toque */ });
+}
+
+boton.addEventListener('click', () => {
+  if (suena()) { apagada = true; cama.pause(); boton.setAttribute('aria-pressed', 'false'); }
+  else { apagada = false; intentaPrender(); }
+});
+
+/* El disparo insiste hasta que SUENE de verdad.
+   Antes iba con `{once:true}` y ahi estaba la falla: si el primer toque llegaba
+   antes de que el audio tuviera datos, `play()` se rechazaba y el unico intento
+   ya se habia gastado — la pagina se quedaba muda para siempre aunque el
+   visitante siguiera tocando. Ahora el oyente no se quita hasta que arranca.
+
+   Van cuatro eventos porque no todos cuentan como "gesto del usuario": el scroll
+   NO cuenta en ningun navegador, y en el celular el primer deslizada empieza por
+   `pointerdown`, que si. */
+/* La puerta de entrada. Un solo toque hace las tres cosas que hacen falta:
+   da el gesto que el navegador exige para poder sonar, prende la musica, y
+   arranca el recorrido. Despues se quita — ya no tiene nada que hacer ahi. */
+function entra(b) {
+  b.classList.add('usado');
+  intentaPrender();
+  document.getElementById('recorrido')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+const DISPAROS = ['pointerdown', 'touchend', 'keydown', 'click'];
+function intentaPrender() {
+  if (apagada) return quitaDisparos();
+  cama.play().then(() => {
+    boton.setAttribute('aria-pressed', 'true');
+    rampa(hablando() ? CAMA_BAJO : CAMA_ALTO, 2500);
+    quitaDisparos();
+  }).catch(() => { /* aun no; se reintenta al siguiente toque */ });
+}
+function quitaDisparos() {
+  for (const ev of DISPAROS) removeEventListener(ev, intentaPrender, true);
+}
+for (const ev of DISPAROS) addEventListener(ev, intentaPrender, true);
+// Y de una vez, por si el navegador ya deja (una pestaña que el visitante ya usó).
+cama.addEventListener('canplay', intentaPrender, { once: true });
+intentaPrender();
+
+// Agacharse cuando hay voz, y volver a subir cuando se acaba.
+for (const v of conVoz) {
+  v.addEventListener('play',  () => { if (suena()) rampa(CAMA_BAJO, 500); });
+  const vuelve = () => { if (suena() && !hablando()) rampa(CAMA_ALTO, 1400); };
+  v.addEventListener('pause', vuelve);
+  v.addEventListener('ended', vuelve);
+}
+
+/* ── Lo que sale de pantalla, se calla ────────────────────────
+   Dos videos se reproducen de verdad: la portada —muda, en bucle— y el de la
+   Siena, que lleva la voz de Mariano. Si uno se desliza y el de la Siena queda
+   arriba, se sigue oyendo una voz que ya no tiene imagen: parece que la pagina
+   se descompuso. Y la portada corriendo detras de todo el recorrido es puro
+   gasto de bateria en el telefono.
+
+   La portada SI vuelve sola al regresar —es el fondo, tiene que estar viva—.
+   El de la Siena NO: si el visitante lo puso, fue una decision suya; volver a
+   arrancarlo solo porque paso por ahi es la pagina hablandole sin permiso. */
+const mirilla = new IntersectionObserver((filas) => {
+  for (const f of filas) {
+    const v = f.target;
+    if (!f.isIntersecting) {
+      if (!v.paused) { v.pause(); v.dataset.lopausamos = '1'; }
+    } else if (v.dataset.lopausamos && v.muted && v.hasAttribute('loop')) {
+      delete v.dataset.lopausamos;
+      v.play().catch(() => {});
+    }
+  }
+}, { threshold: 0.05 });
+document.querySelectorAll('video:not([data-scroll])').forEach((v) => mirilla.observe(v));
+
+/* ── Barra de tiempos y aparecer al entrar ───────────────────── */
+const enlaces = [...document.querySelectorAll('.carrete a')];
+const espia = new IntersectionObserver((filas) => {
+  for (const f of filas) {
+    if (!f.isIntersecting) continue;
+    const id = f.target.id;
+    enlaces.forEach((a) => a.setAttribute('aria-current', String(a.dataset.carrete === id)));
+  }
+}, { rootMargin: '-45% 0px -45% 0px' });
+document.querySelectorAll('section[id]').forEach((s) => espia.observe(s));
+
+const revela = new IntersectionObserver((filas) => {
+  for (const f of filas) if (f.isIntersecting) { f.target.classList.add('visto'); revela.unobserve(f.target); }
+}, { threshold: 0.2 });
+document.querySelectorAll('.aparece').forEach((e) => revela.observe(e));
+</script>

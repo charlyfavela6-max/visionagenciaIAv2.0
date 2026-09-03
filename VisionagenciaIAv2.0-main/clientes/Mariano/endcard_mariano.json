@@ -1,0 +1,58 @@
+{
+  "comp": "Mariano",
+  "imagen": "Endcard.jpeg",
+  "in": 33.3,
+  "dur": 6.0,
+  "encuadre_y": 0.42,
+  "velo_desde": 0.5,
+  "velo_opacidad": 0,
+  "_nota": "Entra directo en 33.30s (donde iba el titular AGENDA TU VISITA, ya quitado). Sin velo negro: el contraste sale del propio fondo desenfocado y oscurecido.",
+  "textos": [
+    {
+      "texto": "MARIANO",
+      "size": 124,
+      "y": 0.585,
+      "tracking": -14
+    },
+    {
+      "texto": "Asesor inmobiliario",
+      "size": 50,
+      "y": 0.645,
+      "color": [
+        0.8,
+        0.86,
+        0.95
+      ],
+      "fuente": "HelveticaNeue-Medium"
+    },
+    {
+      "texto": "San Marino Residencial",
+      "size": 56,
+      "y": 0.72
+    },
+    {
+      "texto": "664 233 4848",
+      "size": 124,
+      "y": 0.822,
+      "tracking": -8
+    },
+    {
+      "texto": "Lunes a sabado de 9 a 6",
+      "size": 42,
+      "y": 0.884,
+      "color": [
+        0.8,
+        0.86,
+        0.95
+      ],
+      "fuente": "HelveticaNeue-Medium"
+    }
+  ],
+  "foto_ancho": 0.6,
+  "foto_alto": 0.4,
+  "foto_y": 0.3,
+  "foto_encuadre": 0.34,
+  "foto_radio": 0.16,
+  "fondo_blur": 95,
+  "fondo_exposicion": -1.55
+}

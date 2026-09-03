@@ -71,8 +71,8 @@ def bloques_portada():
 def bloques_contraportada():
     return [("PRECIO DE PROMOCIÓN", "Montserrat-Black.ttf", 6, VERDE_CLARO, 1.2, 0, 2),
             ("Bálsamo + Cápsulas", "CormorantGaramond-Bold.ttf", 8, VERDE, 1.3, 0, .7),
-            ("$1,399", "Montserrat-Black.ttf", 15, VERDE, 1.1, 0, .8),
-            ("antes $1,600", "Montserrat-Medium.ttf", 6, VERDE_CLARO, 1.2, 0, .5),
+            ("$1,895", "Montserrat-Black.ttf", 15, VERDE, 1.1, 0, .8),
+            ("Precio normal $2,359", "Montserrat-Medium.ttf", 6, VERDE_CLARO, 1.2, 0, .5),
             ("PEDIDOS WHATSAPP", "Montserrat-Medium.ttf", 5.8, VERDE_CLARO, 1.2, 0, 2.4),
             ("818 466 84 56", "Montserrat-Black.ttf", 8, VERDE, 1.2, 0, .35)]
 
@@ -81,8 +81,8 @@ def bloques_contenido():
     # La lista que mando Angel el 3 sep 15:32 con su correccion de las 15:42:
     # «Extracto en lugar de cáscara» y «(Resveratrol)». Vitamina D y toronja
     # salieron porque su lista nueva ya no las trae.
-    ing = "\n".join(("Piel de camarón", "Boswelia serrata", "Calcio", "Magnesio",
-                     "Extracto de naranja", "Extracto de limón",
+    ing = "\n".join(("Piel de camarón", "Boswelia serrata", "Calcio", "Vitamina D",
+                     "Magnesio", "Extracto de naranja", "Extracto de limón",
                      "Extracto de semilla", "de uva (Resveratrol)"))
     return [("CÁPSULAS · CONTIENE", "Montserrat-Black.ttf", 6.2, VERDE_CLARO, 1.2, 0, 1.6),
             (ing, "Montserrat-Medium.ttf", 6.6, VERDE, 1.5, 0, .9),

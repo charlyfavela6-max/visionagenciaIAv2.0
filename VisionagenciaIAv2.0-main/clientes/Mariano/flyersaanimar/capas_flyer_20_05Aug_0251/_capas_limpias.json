@@ -1,0 +1,17 @@
+{
+  "metodo": "alfa del corte recto + color del fondo sin texto",
+  "costo_usd": 0,
+  "paneles": [
+    {
+      "capa": "30_panel_izq_limpio.png",
+      "de": "20_panel_izquierdo.png",
+      "cobertura_pct": 11.45
+    },
+    {
+      "capa": "31_panel_der_limpio.png",
+      "de": "21_panel_derecho.png",
+      "cobertura_pct": 14.55
+    }
+  ],
+  "fondo_sin_paneles": "32_fondo_sin_paneles.png"
+}

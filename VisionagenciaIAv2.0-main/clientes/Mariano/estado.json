@@ -1,0 +1,127 @@
+{
+  "cliente": "Mariano",
+  "telefono": "5216642334848",
+  "fase_actual": "publicacion",
+  "oferta": null,
+  "unicornio_referencia": null,
+  "guion": {
+    "texto": "[Guion inferido de 6 archivo(s) de audio]",
+    "version": "master"
+  },
+  "voz": {
+    "clonada": false,
+    "version": null,
+    "banco_voz_default": null,
+    "audio_path": null
+  },
+  "fotos_referencia": [],
+  "ancla_identidad": {
+    "descripcion_prenda": "saco sport beige claro sin corbata sobre camisa blanca abotonada, jeans azul oscuro con cinturon de piel cafe y reloj plateado en la muneca izquierda, zapatos cafes; nunca traje azul marino de dos piezas ni overol",
+    "descripcion_rostro": null,
+    "nota": "Ropa tomada de sus principales trust/cta, las fotos reales en la oficina de San Marino"
+  },
+  "escenas": {
+    "hook": {
+      "estado": "aprobada",
+      "path": "character_sheet.png"
+    },
+    "demo": {
+      "estado": "aprobada",
+      "path": "character_sheet_realista.png"
+    },
+    "trust": {
+      "estado": "aprobada",
+      "path": "frameA_celular.png"
+    },
+    "cta": {
+      "estado": "aprobada",
+      "path": "frameB_defrente.png"
+    }
+  },
+  "video": {
+    "estado": "aprobada",
+    "path": "mariano_hablando_infinitetalk.mp4"
+  },
+  "publicacion": {
+    "facebook": {
+      "pagina": "Mariano asesor Inmobiliario",
+      "acceso": "Full access (everything except sensitive actions)",
+      "via": "Partner en Business Manager 'Baja Homes by Mariano'",
+      "business_id_vision_agencia": "717004648166977",
+      "page_token": null,
+      "nota": "Acceso de persona, no de sistema: falta Page Access Token para publicar por API"
+    },
+    "meta_ads": {
+      "cuenta_publicitaria_asignada": false,
+      "nota": "Solo asigno 1 activo (la pagina). Sin ad account no se puede pautar."
+    },
+    "admin_agregado": true
+  },
+  "metricas": {
+    "datos": null,
+    "ultima_actualizacion": null
+  },
+  "historial": [
+    {
+      "ts": "2026-07-21T00:19:47.708Z",
+      "fase": "imagen",
+      "accion": "confirmó primer pago vía WhatsApp (\"listo el primer pago\")"
+    },
+    {
+      "ts": "2026-07-21T00:19:47.709Z",
+      "fase": "imagen",
+      "accion": "pidió que los ganchos del video sean tipo urgencia"
+    },
+    {
+      "ts": "2026-07-23T03:01:13.092Z",
+      "fase": "imagen",
+      "accion": "recibido: [image] "
+    },
+    {
+      "ts": "2026-07-23T03:01:37.686Z",
+      "fase": "imagen",
+      "accion": "recibido: Mañana sale con realismo y con este gancho general para meter las 3 casas y con edición de subtitulos 🫡"
+    },
+    {
+      "ts": "2026-07-23T03:31:10.894Z",
+      "fase": "imagen",
+      "accion": "recibido: Ok"
+    },
+    {
+      "ts": "2026-07-23T03:31:30.330Z",
+      "fase": "imagen",
+      "accion": "recibido: que le parece la sugerencia de la IA?"
+    },
+    {
+      "ts": "2026-07-23T03:32:02.070Z",
+      "fase": "imagen",
+      "accion": "recibido: o lo hacemos como dice usted, no tengo preferencias jeje, con que se vea bien a mi estilo lo sacamos"
+    },
+    {
+      "ts": "2026-07-23T03:32:17.768Z",
+      "fase": "imagen",
+      "accion": "recibido: Me gusta"
+    },
+    {
+      "ts": "2026-07-23T03:32:31.642Z",
+      "fase": "imagen",
+      "accion": "recibido: Aah muy bien mañana lo sacamos así entonces 🫡"
+    },
+    {
+      "ts": "2026-08-04T16:42:00.000Z",
+      "fase": "publicacion",
+      "accion": "Mariano agrego a Vision Agencia como Partner y asigno la pagina 'Mariano asesor Inmobiliario' con acceso total; falta cuenta publicitaria e Instagram"
+    }
+  ],
+  "createdAt": "2026-07-21T00:19:22.555Z",
+  "updatedAt": "2026-08-04T18:35:02.848697Z",
+  "stride": {
+    "archivo": "frames/stride_v5.png",
+    "sd": 84.3,
+    "pierna_piso": 129.8,
+    "cuerpo_alto_pct": 76.9,
+    "punto": 0.965,
+    "entre": 6,
+    "criterio": "sd>=50 y pierna-piso>=50; la apertura no decide"
+  }
+}

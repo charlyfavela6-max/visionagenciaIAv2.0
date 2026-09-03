@@ -1,0 +1,68 @@
+{
+  "fuente": "clientes/Mariano/flyersaanimar/flyer_20_05Aug_0251.jpg",
+  "metodo": "el separador crema del collage se aisla por color en HSV, Hough da las lineas y cada panel se recorta con el poligono que forman con los bordes del cuadro",
+  "costo_usd": 0,
+  "divisiones": [
+    {
+      "grados": 11.4,
+      "y_en_x0": 634,
+      "y_en_ancho": 957
+    },
+    {
+      "grados": 1.5,
+      "y_en_x0": 801,
+      "y_en_ancho": 843
+    },
+    {
+      "grados": -14.0,
+      "y_en_x0": 1316,
+      "y_en_ancho": 918
+    }
+  ],
+  "paneles": [
+    {
+      "capa": "20_panel_izquierdo.png",
+      "vertices": [
+        [
+          0,
+          633
+        ],
+        [
+          515,
+          737
+        ],
+        [
+          515,
+          1188
+        ],
+        [
+          0,
+          1316
+        ]
+      ],
+      "porcentaje": 11.4
+    },
+    {
+      "capa": "21_panel_derecho.png",
+      "vertices": [
+        [
+          1112,
+          830
+        ],
+        [
+          1600,
+          843
+        ],
+        [
+          1600,
+          1600
+        ],
+        [
+          1112,
+          1600
+        ]
+      ],
+      "porcentaje": 14.6
+    }
+  ]
+}

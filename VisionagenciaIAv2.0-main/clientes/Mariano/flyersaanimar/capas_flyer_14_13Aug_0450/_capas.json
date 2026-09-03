@@ -1,0 +1,10 @@
+{
+  "flyer": "clientes/Mariano/flyersaanimar/flyer_14_13Aug_0450.jpg",
+  "metodo": "GPT Image 2 edit borra el texto; la diferencia contra el original da el alfa",
+  "para": "Kling: 10_sin_texto.png es el primer cuadro y el flyer original el ultimo",
+  "cobertura_texto_pct": 9.87,
+  "capas": [
+    "10_sin_texto.png",
+    "11_solo_texto.png"
+  ]
+}

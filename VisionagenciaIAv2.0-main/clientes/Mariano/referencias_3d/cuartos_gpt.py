@@ -46,6 +46,26 @@ CUARTOS = {
     "lavado":        (["23"], "the laundry room with washer and dryer"),
     "jardin":        (["16"], "the back garden with artificial turf, the concrete "
                               "retaining wall and the view down to the road"),
+    "puerta_abre":   (["17", "12"], "a cross-section of two floors at once: on top the "
+                                    "roof terrace — a BARE sun-baked terrace with pale "
+                                    "floor tile, a low white parapet wall and one large "
+                                    "teak table with chairs, NO planters and NO potted "
+                                    "plants (the green cylinders in the grey model are "
+                                    "placeholders that do not exist in the real house), "
+                                    "plus the built-in outdoor lounge seating along the "
+                                    "right-hand side of that terrace, which must stay — "
+                                    "and underneath, the master bedroom on the left and, "
+                                    "on the right, the ground-floor living room — the two "
+                                    "plain boxes there are a CAMEL-COLOURED LEATHER "
+                                    "ARMCHAIR on a wood base and a SQUARE TRAVERTINE "
+                                    "COFFEE TABLE, and that room also has sheer gauze "
+                                    "curtains, vertical wood slats and a framed canvas on "
+                                    "the wall; draw them all as the real furniture they "
+                                    "are, never as bare blocks"),
+    "dos_rec_bano":  (["13", "19"], "a cross-section of the lower floor: two secondary "
+                                    "bedrooms side by side with a bathroom between them, "
+                                    "the left bed with a chocolate throw, the right one "
+                                    "with a beige upholstered headboard"),
 }
 
 PROMPT = (
@@ -63,6 +83,76 @@ PROMPT = (
     "text, no watermark, no people. "
     "TALL VERTICAL 9:16 PORTRAIT ORIENTATION."
 )
+
+
+# Los cuartos que hay que leer como CORTE de la casa. GPT Image, si se le deja,
+# mete la camara dentro y los cierra en un cuarto normal de cuatro paredes: se
+# pierde que son parte de una estructura abierta, con sus losas y sus niveles.
+CORTE = {"sala", "recamara_ppal", "dos_recamaras", "dos_rec_bano", "lavado",
+         "puerta_abre", "jardin"}
+
+PROMPT_CORTE = (
+    "Turn the FIRST image into a realistic photograph of {que}. "
+    "IMPORTANT — this is an ARCHITECTURAL CUTAWAY, a doll's-house section of a real "
+    "building photographed FROM OUTSIDE: the front wall is removed and you look "
+    "straight into the rooms. Keep it that way. Do NOT move the camera inside the "
+    "room, do NOT close the space into an ordinary four-walled interior, do NOT "
+    "invent a front wall or a ceiling over the viewer. "
+    "Keep EXACTLY what the grey model shows: the same camera position and framing, "
+    "the horizontal concrete floor slabs cut through and seen edge-on as bands "
+    "across the picture, more than one room and more than one storey visible at "
+    "once, the open sky and the outdoors where the model has them, and every wall, "
+    "window and piece of furniture in its place. Do not add or remove furniture. "
+    "The other image or images are real photographs of this same house: copy their "
+    "materials, colours, finishes and daylight — the wall paint, the floor tile, the "
+    "wood tones, the fabrics, the window frames. "
+    "It must look like a real photograph of a finished house at midday, sharp and "
+    "sunlit, with real texture on every surface and the cut slab edges reading as "
+    "real concrete. "
+    "FINISH THE WHOLE PICTURE, not just the main room. Every grey or white block in "
+    "the model is a REAL piece of furniture and must end up fully finished — real "
+    "wood, real fabric, real leaves on the plants, real steps on the stairs. Do not "
+    "leave any plain white or grey box, any untextured slab or any placeholder shape "
+    "anywhere in the frame: the rooms behind and below the main one must look just as "
+    "finished as the main one. "
+    "The walls and floor slabs are smooth painted plaster and smooth concrete, like a "
+    "newly built house — NOT porous limestone, NOT rough stone, NOT a plaster scale "
+    "model or a museum maquette. "
+    "The roof terrace of the real house (see the photographs) has pale floor tile, a "
+    "low white parapet, a dark grey outdoor lounge set — sofa, armchairs and a low "
+    "table — and real leafy plants along the parapet, with the sea on the horizon. "
+    "The rows of identical green cylinders in the grey model are Blender "
+    "placeholders: replace them with those real plants and that real furniture. "
+    "Not a render, not a 3D image, no text, no watermark, no people. "
+    "TALL VERTICAL 9:16 PORTRAIT ORIENTATION."
+)
+
+
+# Las FOTOS REALES que mando Mariano el 2 sep 2026 (fotos_reales/). Van antes que
+# los frames de `escenas_wa`, que salian de un video y estaban borrosos. Si un
+# cuarto no aparece aqui se sigue usando su clip de siempre.
+FOTOS = {
+    "fachada":       ["fachada_1_03", "fachada_2_17"],
+    "cochera":       ["fachada_1_03", "fachada_2_17"],
+    "escalones":     ["escalera_1_25", "escalera_2_29"],
+    "sala":          ["sala_2_02", "sala_1_01", "sala_6_32"],
+    "cocina":        ["cocina_1_30"],
+    "pasillo":       ["escalera_1_25"],
+    "roofgarden":    ["roofgarden_1_15", "roofgarden_2_20"],
+    "recamara_ppal": ["recamara_ppal_1_22", "recamara_ppal_2_24"],
+    "vestidor":      ["recamara_ppal_2_24"],
+    "dos_recamaras": ["recamara_1_12", "recamara_2_16", "recamara_3_26"],
+    "estudio":       ["recamara_3_26", "sala_pa_3_19"],
+    "lavado":        ["bano_3_14"],
+    "jardin":        ["jardin_1_11", "fachada_3_23"],
+    "puerta_abre":   ["roofgarden_1_15", "sala_2_02", "recamara_ppal_1_22"],
+    "dos_rec_bano":  ["recamara_1_12", "bano_4_21", "recamara_3_26"],
+}
+
+
+def foto(nombre):
+    ruta = os.path.join(AQUI, "fotos_reales", nombre + ".jpg")
+    return ruta if os.path.exists(ruta) else None
 
 
 def env(nombre):
@@ -120,9 +210,12 @@ def haz(cuarto):
     if os.path.exists(destino):
         print("  ya existe %s — bórralo si quieres rehacerlo" % cuarto); return destino
 
-    imagenes = [uri(base)] + [uri(clip(c)) for c in clips if clip(c)]
+    reales = [foto(n) for n in FOTOS.get(cuarto, [])]
+    reales = [r for r in reales if r] or [clip(c) for c in clips if clip(c)]
+    imagenes = [uri(base)] + [uri(r) for r in reales[:9]]
+    plantilla = PROMPT_CORTE if cuarto in CORTE else PROMPT
     d = pide("openai/gpt-image-2/edit", {
-        "prompt": PROMPT.format(que=que),
+        "prompt": plantilla.format(que=que),
         "images": imagenes,
         "aspect_ratio": "9:16",
         "output_format": "png",

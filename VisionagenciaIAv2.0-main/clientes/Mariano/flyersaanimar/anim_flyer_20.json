@@ -1,0 +1,113 @@
+{
+  "nombre": "MARIANO_SAN_MARINO_FLYER20",
+  "fuente": "clientes/Mariano/flyersaanimar/flyer_20_05Aug_0251.jpg",
+  "capas_dir": "clientes/Mariano/flyersaanimar/capas_flyer_20_05Aug_0251",
+  "comp": { "w": 1600, "h": 1600, "fps": 30, "dur": 10.0 },
+  "notas": {
+    "orden": "de abajo hacia arriba, igual que se apila en After Effects",
+    "easing": "tercer valor de cada llave: lin | out | in | inout. Aplica al tramo que TERMINA en esa llave",
+    "pos": "centro de la capa en pixeles de comp; todas las capas son de 1600x1600, asi que 800,800 es su lugar original",
+    "wipe": "porcentaje sin revelar, 100 = capa oculta, 0 = capa completa. Revela de izquierda a derecha",
+    "padre": "el movimiento de camara vive en el nulo CAMARA y todo cuelga de el. Si el fondo se acercara solo, el titular y el precio se despegarian de la tarjeta sobre la que estan disenados",
+    "camara": "va de 105 a 100, no al reves: asi el ultimo cuadro es el flyer EXACTO, sin recorte, que es como tiene que terminar un anuncio"
+  },
+  "capas": [
+    {
+      "id": "CAMARA",
+      "tipo": "nulo",
+      "keys": {
+        "scale": [[0.0, 105], [4.0, 100.6, "out"], [10.0, 100, "lin"]],
+        "pos":   [[0.0, [800, 806]], [4.0, [800, 801], "out"], [10.0, [800, 800], "lin"]]
+      }
+    },
+    {
+      "id": "FONDO",
+      "archivo": "32_fondo_sin_paneles.png",
+      "padre": "CAMARA",
+      "keys": {
+        "opacity": [[0.0, 0], [0.4, 100, "out"]],
+        "blur":    [[0.0, 26], [0.9, 0, "out"]]
+      }
+    },
+    {
+      "id": "PANEL_IZQ",
+      "archivo": "30_panel_izq_limpio.png",
+      "padre": "CAMARA",
+      "keys": {
+        "opacity": [[0.0, 0], [0.4, 100, "out"]],
+        "pos":     [[0.0, [370, 830]], [0.95, [800, 800], "out"], [10.0, [788, 800], "lin"]],
+        "rot":     [[0.0, -2.5], [0.95, 0, "out"]],
+        "scale":   [[0.0, 104], [0.95, 100, "out"], [10.0, 104, "lin"]]
+      }
+    },
+    {
+      "id": "PANEL_DER",
+      "archivo": "31_panel_der_limpio.png",
+      "padre": "CAMARA",
+      "keys": {
+        "opacity": [[0.12, 0], [0.5, 100, "out"]],
+        "pos":     [[0.12, [1240, 820]], [1.1, [800, 800], "out"], [10.0, [814, 800], "lin"]],
+        "rot":     [[0.12, 2.5], [1.1, 0, "out"]],
+        "scale":   [[0.12, 104], [1.1, 100, "out"], [10.0, 104, "lin"]]
+      }
+    },
+    {
+      "id": "LOGO",
+      "archivo": "02_bloque_00_14.png",
+      "padre": "CAMARA",
+      "keys": {
+        "opacity": [[0.85, 0], [1.1, 100, "out"]],
+        "pos":     [[0.85, [800, 610]], [1.4, [800, 812], "out"], [1.62, [800, 800], "inout"]]
+      }
+    },
+    {
+      "id": "TITULAR",
+      "archivo": "03_bloque_17_32.png",
+      "padre": "CAMARA",
+      "keys": {
+        "wipe":    [[1.35, 100], [2.25, 0, "out"]],
+        "pos":     [[1.35, [800, 826]], [2.25, [800, 800], "out"]],
+        "blur":    [[1.35, 7], [2.1, 0, "out"]],
+        "opacity": [[1.35, 100]]
+      }
+    },
+    {
+      "id": "PRECIO",
+      "archivo": "04_bloque_71_78.png",
+      "padre": "CAMARA",
+      "keys": {
+        "opacity": [[2.25, 0], [2.42, 100, "out"]],
+        "scale":   [[2.25, 72], [2.58, 106, "out"], [2.8, 100, "inout"], [6.0, 100, "lin"], [6.28, 104, "out"], [6.6, 100, "inout"]]
+      }
+    },
+    {
+      "id": "PIE",
+      "archivo": "05_bloque_93_99.png",
+      "padre": "CAMARA",
+      "keys": {
+        "opacity": [[2.95, 0], [3.6, 100, "out"]]
+      }
+    },
+    {
+      "id": "BRILLO",
+      "tipo": "solido",
+      "color": [255, 255, 255],
+      "tam": [220, 2600],
+      "blend": "add",
+      "blur_fijo": 130,
+      "keys": {
+        "rot":     [[0.0, 18]],
+        "pos":     [[4.4, [-380, 800]], [6.1, [1980, 800], "inout"]],
+        "opacity": [[4.4, 0], [4.95, 7, "out"], [5.5, 7, "lin"], [6.1, 0, "in"]]
+      }
+    },
+    {
+      "id": "VINETA",
+      "tipo": "vineta",
+      "borde": 0.45,
+      "keys": {
+        "opacity": [[0.0, 0], [0.9, 42, "out"]]
+      }
+    }
+  ]
+}

@@ -200,9 +200,9 @@ def contraportada(d):
     y = centrado(d, y, "Paquete\nBálsamo + Cápsulas",
                  f("CormorantGaramond-Bold.ttf", 11), x0 + m, an - 2 * m, interlinea=1.4)
     y += int(3 * MM)
-    y = centrado(d, y, "$1,399", f("Montserrat-Black.ttf", 17), x0, an)
+    y = centrado(d, y, "$1,895", f("Montserrat-Black.ttf", 17), x0, an)
     y += int(2 * MM)
-    centrado(d, y, "Precio normal $1,600", f("Montserrat-Medium.ttf", 7),
+    centrado(d, y, "Precio normal $2,359", f("Montserrat-Medium.ttf", 7),
              x0 + m, an - 2 * m, color=VERDE_CLARO)
     y = int(64 * MM)
     y = centrado(d, y, "PEDIDOS WHATSAPP", f("Montserrat-Medium.ttf", 7),
@@ -215,8 +215,10 @@ def contraportada(d):
 # las 15:42: «que diga Extracto en lugar de cáscara» y «(Resveratrol)».
 # Salieron VITAMINA D y CÁSCARA DE TORONJA porque su lista ya no las trae —
 # si las quiere de vuelta, se vuelven a meter aqui y ya.
-INGREDIENTES = ("Piel de camarón", "Boswelia serrata", "Calcio", "Magnesio",
-                "Extracto de naranja", "Extracto de limón",
+# 3 sep 20:42, contestando: «PONER VITAMINA D ENSEGUIDA DEL CALCIO». La
+# cascara de toronja no la volvio a pedir, asi que se queda fuera.
+INGREDIENTES = ("Piel de camarón", "Boswelia serrata", "Calcio", "Vitamina D",
+                "Magnesio", "Extracto de naranja", "Extracto de limón",
                 "Extracto de semilla\nde uva (Resveratrol)")
 CADUCIDAD = "CADUCIDAD:  DIC 2028"
 

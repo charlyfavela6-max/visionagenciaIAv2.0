@@ -1,0 +1,14 @@
+{
+  "fuente": "clientes/Mariano/whatsapp/media/1784520625_image_-hfoY3QcAAI4.jpeg",
+  "metodo": "GPT Image 2 edit borra el texto; la diferencia contra el original da el alfa",
+  "seedream_5_pro": "si separa capas de verdad (2-20 PNG con alfa) pero solo en fal.ai; WaveSpeed no lo sirve y no hay FAL_KEY en el .env",
+  "capas": [
+    "10_fondo_sin_texto.png",
+    "11_todo_el_texto.png",
+    "01_titular.png",
+    "02_precio.png",
+    "03_iconos.png",
+    "04_cierre.png",
+    "05_telefono.png"
+  ]
+}

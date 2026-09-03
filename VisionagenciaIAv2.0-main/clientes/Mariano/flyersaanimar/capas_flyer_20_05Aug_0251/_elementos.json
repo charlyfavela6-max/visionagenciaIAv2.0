@@ -1,0 +1,22 @@
+{
+  "fuente": "clientes/Mariano/flyersaanimar/flyer_20_05Aug_0251.jpg",
+  "metodo": "Seedream v5.0 Pro Edit (Atlas) borra UN elemento por llamada; lo que cambia entre el original y esa version es exactamente ese elemento",
+  "costo_usd_por_elemento": 0.036,
+  "elementos": [
+    {
+      "capa": "10_casa.png",
+      "sin": "_sin_10_casa.png",
+      "porcentaje": 29.9
+    },
+    {
+      "capa": "11_interiores.png",
+      "sin": "_sin_11_interiores.png",
+      "porcentaje": 20.5
+    },
+    {
+      "capa": "12_suelo.png",
+      "sin": "_sin_12_suelo.png",
+      "porcentaje": 12.0
+    }
+  ]
+}

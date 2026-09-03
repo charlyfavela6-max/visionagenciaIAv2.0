@@ -1,0 +1,234 @@
+{
+  "alto": 1920,
+  "recorte": "MARIANO_ALPHA.mov",
+  "fondo": "mariano_SIN_TEXTO.mp4",
+  "tap": "WhatsApp Audio 2026-07-28 at 5.35.50 PM.mpeg",
+  "comp": "Mariano",
+  "_fuente": "whisper --word_timestamps sobre /tmp/claude-1000/-workspaces-VisionagenciaIAv2-0/c6bc028c-6246-462c-8b05-567243213e69/scratchpad/tx/mariano_SIN_TEXTO.json; karaoke generado por _spec_desde_whisper.py",
+  "_regla": "El karaoke del centro cubre TODAS las palabras del audio, con la palabra exacta que se oye. Los titulares se agregan aparte y aplicarReglaNoRepetir quita del centro lo que el titular ya muestra arriba.",
+  "bloques": [
+    {
+      "tipo": "karaoke",
+      "in": 0.0,
+      "dur": 1.14,
+      "texto": "todos buscan casa"
+    },
+    {
+      "tipo": "titular",
+      "in": 0.3,
+      "dur": 3.1,
+      "lineas": [
+        {
+          "texto": "todos buscan",
+          "color": "blanco"
+        },
+        {
+          "texto": "casa nueva",
+          "color": "acento"
+        }
+      ]
+    },
+    {
+      "tipo": "karaoke",
+      "in": 1.14,
+      "dur": 1.26,
+      "texto": "nueva pensando que"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 2.4,
+      "dur": 0.64,
+      "texto": "hay tiempo de"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 3.04,
+      "dur": 0.4,
+      "texto": "sobra."
+    },
+    {
+      "tipo": "karaoke",
+      "in": 3.58,
+      "dur": 0.74,
+      "texto": "en san marino"
+    },
+    {
+      "tipo": "titular",
+      "in": 3.9,
+      "dur": 4.2,
+      "lineas": [
+        {
+          "texto": "el precio",
+          "color": "blanco"
+        },
+        {
+          "texto": "de esta etapa",
+          "color": "acento"
+        }
+      ]
+    },
+    {
+      "tipo": "karaoke",
+      "in": 4.32,
+      "dur": 0.72,
+      "texto": "residencial,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 5.4,
+      "dur": 0.64,
+      "texto": "el precio de"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 6.04,
+      "dur": 0.84,
+      "texto": "esta etapa no"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 6.88,
+      "dur": 0.48,
+      "texto": "va a seguir"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 7.36,
+      "dur": 0.82,
+      "texto": "igual el mes"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 8.18,
+      "dur": 0.5,
+      "texto": "que entra."
+    },
+    {
+      "tipo": "titular",
+      "in": 9.26,
+      "dur": 0.9,
+      "texto": "siena",
+      "color": "blanco",
+      "efecto": true
+    },
+    {
+      "tipo": "karaoke",
+      "in": 9.26,
+      "dur": 0.48,
+      "texto": "siena."
+    },
+    {
+      "tipo": "karaoke",
+      "in": 10.32,
+      "dur": 0.7,
+      "texto": "tres niveles,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 11.44,
+      "dur": 1.16,
+      "texto": "recámaras con ventanal"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 12.6,
+      "dur": 1.3,
+      "texto": "y escalera abierta,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 14.2,
+      "dur": 1.46,
+      "texto": "desde 4.4"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 15.66,
+      "dur": 0.4,
+      "texto": "millones."
+    },
+    {
+      "tipo": "titular",
+      "in": 18.16,
+      "dur": 1.0,
+      "texto": "catania",
+      "color": "blanco",
+      "efecto": true
+    },
+    {
+      "tipo": "karaoke",
+      "in": 18.16,
+      "dur": 0.72,
+      "texto": "catania,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 19.28,
+      "dur": 0.94,
+      "texto": "terraza en azotea"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 20.22,
+      "dur": 0.88,
+      "texto": "y ventanales con"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 21.1,
+      "dur": 0.74,
+      "texto": "vista abierta,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 22.18,
+      "dur": 0.98,
+      "texto": "desde 5 millones."
+    },
+    {
+      "tipo": "titular",
+      "in": 26.36,
+      "dur": 1.0,
+      "texto": "brescia",
+      "color": "blanco",
+      "efecto": true
+    },
+    {
+      "tipo": "karaoke",
+      "in": 26.36,
+      "dur": 0.52,
+      "texto": "brescia,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 27.12,
+      "dur": 0.68,
+      "texto": "sala amplia,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 27.96,
+      "dur": 0.9,
+      "texto": "terraza propia y"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 28.86,
+      "dur": 1.04,
+      "texto": "recámara con vista,"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 30.14,
+      "dur": 1.16,
+      "texto": "desde 3.8"
+    },
+    {
+      "tipo": "karaoke",
+      "in": 31.3,
+      "dur": 0.46,
+      "texto": "millones."
+    }
+  ],
+  "_nota_endcard": "Sin 'agenda tu visita' (ni titular ni karaoke): la end card entra directo en 33.30s y ya lleva el CTA con el telefono."
+}
