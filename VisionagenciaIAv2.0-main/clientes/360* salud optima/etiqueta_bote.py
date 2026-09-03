@@ -74,7 +74,7 @@ def saca_sprites():
             # OJO: a .755 el recorte se lleva PEGADO el «CONTENIDO: 30
             # CÁPSULAS» de su v5, y al escribir el nuestro encima salia doble.
             # Se corta por debajo de esa linea.
-            "banda_abajo": (0, .815, 1, 1),
+            "banda_abajo": (0, .862, 1, 1),
             # el recorte del sello arrastraba un pedazo del filete de oro de su v5, que
             # quedaba flotando arriba a la izquierda: se aprieta.
             "sello": (.582, .448, .682, .630),
@@ -116,12 +116,14 @@ INGREDIENTES = ("Piel de camarón", "Boswellia Serrata", "Calcio", "Vitamina D",
                 "Extracto de semilla de uva", "(Resveratrol)")
 
 MODO = ("2 cápsulas con los alimentos", "por la mañana, diariamente")
-UTIL = ("Regenerador de cartílagos", "Anti-estrés")
-LEGAL = ("Indicado para mayores de 18 años en adelante.",
-         "No se deje al alcance de los niños.",
-         "Manténgase en un lugar fresco y seco.",
-         "Este producto no es un medicamento, es",
-         "responsabilidad de quien lo recomienda y lo usa.")
+UTIL = ("Rodillas sanas", "Músculos sanos", "Huesos sanos",
+        "Piel y cabello radiante", "Anti-estrés", "Anti-ansiedad")
+# Al pie y en una sola linea: con seis «útil para» ya no caben en la columna.
+# UN SOLO renglon: con dos, el segundo caia encima de la guirnalda de abajo y
+# no se leia. Se aprieta hasta que entre a lo ancho de la etiqueta.
+LEGAL_PIE = ("Indicado para mayores de 18 años  ·  No se deje al alcance de los niños  ·  "
+             "Manténgase en un lugar fresco y seco  ·  Este producto no es un medicamento, "
+             "es responsabilidad de quien lo recomienda y lo usa",)
 CADUCIDAD = "CADUCIDAD:  DIC 2028"
 
 MODELOS = {
@@ -132,20 +134,18 @@ MODELOS = {
 
 # (texto, fuente, pt, color, interlinea, hueco que va ANTES en mm)
 def bloques_izq():
-    return [("INGREDIENTES:", SERIF, 9.5, ORO, 1.2, 0.0, 1)] + \
-           [(t, SERIF, 8.6, CREMA, 1.22, (1.6 if i == 0 else 0.0), 0)
+    return [("INGREDIENTES:", SERIF, 9.0, ORO, 1.15, 0.0, 1)] + \
+           [(t, SERIF, 11.0, CREMA, 1.12, (1.2 if i == 0 else 0.0), 0)
             for i, t in enumerate(INGREDIENTES)]
 
 
 def bloques_der():
-    b = [("ÚTIL PARA:", SERIF, 9.5, ORO, 1.2, 0.0, 1)]
-    b += [(t, SERIF, 8.6, CREMA, 1.22, (1.6 if i == 0 else 0.0), 0)
+    b = [("ÚTIL PARA:", SERIF, 9.0, ORO, 1.15, 0.0, 1)]
+    b += [(t, SERIF, 11.0, CREMA, 1.12, (1.2 if i == 0 else 0.0), 0)
           for i, t in enumerate(UTIL)]
-    b += [("MODO DE USO:", SERIF, 9.5, ORO, 1.2, 3.0, 1)]
-    b += [(t, SERIF, 8.6, CREMA, 1.22, (1.6 if i == 0 else 0.0), 0)
+    b += [("MODO DE USO:", SERIF, 9.0, ORO, 1.15, 2.2, 1)]
+    b += [(t, SERIF, 9.0, CREMA, 1.15, (1.2 if i == 0 else 0.0), 0)
           for i, t in enumerate(MODO)]
-    b += [(t, SERIF, 7.4, CREMA, 1.22, (3.0 if i == 0 else 0.0), 0)
-          for i, t in enumerate(LEGAL)]
     return b
 
 
@@ -195,8 +195,8 @@ def haz(clave):
     # Tres columnas y un pie. El sello y el bloque del centro NO se solapan
     # porque el centro va centrado en x=78 (no en la mitad de la etiqueta),
     # igual que en su v5, y el sello vive a su derecha.
-    columna(d, im, 8, 42, 13.5, 48.5, bloques_izq())
-    columna(d, im, 120, 36, 13.5, 48.5, bloques_der())
+    columna(d, im, 8, 42, 13.0, 48.5, bloques_izq())
+    columna(d, im, 118, 40, 13.0, 48.5, bloques_der())
 
     # ---- centro: el nombre, que NO se toca de tamano ------------------------
     cx = mm(78)
@@ -227,13 +227,21 @@ def haz(clave):
     im.paste(sel, (mm(102), mm(31)))
 
     # ---- pie: contenido y caducidad, en el claro de la guirnalda ----------
-    y = mm(50.3)
+    cm = W // 2
+    y = mm(49.6)
     t = "CONTENIDO: %d CÁPSULAS      ·      %s" % (capsulas, CADUCIDAD)
     fu = f(SERIF, 9.5)
     an = d.textlength(t, font=fu)
-    d.text((cx - an / 2, y), t, font=fu, fill=CREMA)
-    regla(d, cx - an / 2 - mm(8), cx - an / 2 - mm(2.5), y + fu.size * 0.55)
-    regla(d, cx + an / 2 + mm(2.5), cx + an / 2 + mm(8), y + fu.size * 0.55)
+    d.text((cm - an / 2, y), t, font=fu, fill=CREMA)
+    regla(d, cm - an / 2 - mm(8), cm - an / 2 - mm(2.5), y + fu.size * 0.55)
+    regla(d, cm + an / 2 + mm(2.5), cm + an / 2 + mm(8), y + fu.size * 0.55)
+    y += mm(4.4)
+    for l in LEGAL_PIE:
+        fl = f(SERIF, 7.6)
+        while d.textlength(l, font=fl) > W - mm(16):
+            fl = f(SERIF, fl.size * 2.845 / MM - 0.25)
+        d.text((cm - d.textlength(l, font=fl) / 2, y), l, font=fl, fill=ORO)
+        y += fl.size * 1.25
 
     png = os.path.join(AQUI, "360_%s_IMPRENTA_v7.png" % clave.upper())
     pdf = os.path.join(AQUI, "360_%s_IMPRENTA_v7.pdf" % clave.upper())
