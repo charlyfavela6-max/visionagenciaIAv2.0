@@ -167,10 +167,19 @@ def arma():
            f("Montserrat-Black.ttf", 8), color=VERDE_CLARO, x0=m, an=util)
 
     # dos columnas, y el sello en el hueco que queda al centro
-    izq = ("Piel de camarón", "Calcio", "Magnesio", "Vitamina D")
-    der = ("Semilla de uva", "Cáscara de limón", "Cáscara de toronja",
-           "Cáscara de naranja")
+    # La lista de Angel del 3 sep, con sus tres correcciones: «Extracto» en vez
+    # de «cascara», «(Resveratrol)» y la Vitamina D enseguida del Calcio.
+    izq = ("Piel de camarón", "Boswelia serrata", "Calcio", "Vitamina D")
+    der = ("Magnesio", "Extracto de naranja", "Extracto de limón",
+           "Extracto de semilla de uva (Resveratrol)")
+    # «Extracto de semilla de uva (Resveratrol)» ya no cabe a 9 pt en media
+    # hoja: se baja el cuerpo hasta que la linea mas larga entre en la columna.
     fu = f("Montserrat-Medium.ttf", 9)
+    pt = 9.0
+    while pt > 5 and max(d.textlength(t, font=f("Montserrat-Medium.ttf", pt))
+                         for t in izq + der) > int(88 * MM):
+        pt -= 0.25
+    fu = f("Montserrat-Medium.ttf", pt)
     for cx, lista in ((int(52 * MM), izq), (W - int(52 * MM), der)):
         yy = int(165 * MM)
         for t in lista:
@@ -190,7 +199,7 @@ def arma():
     centro(d, caja + int(11 * MM), "Paquete Bálsamo + Cápsulas",
            f("CormorantGaramond-Bold.ttf", 15), x0=m, an=util)
     fu2, fu3 = f("Montserrat-Black.ttf", 24), f("Montserrat-Medium.ttf", 9)
-    a, b = "$1,399", "   antes $1,600"
+    a, b = "$1,895", "   Precio normal $2,359"
     x = (W - d.textlength(a, font=fu2) - d.textlength(b, font=fu3)) / 2
     yv = caja + int(20 * MM)
     d.text((x, yv), a, font=fu2, fill=VERDE)

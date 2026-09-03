@@ -71,11 +71,18 @@ NIVELES = {
 }
 
 
+_VECINA = __import__("re").compile(r"_v-?\d+(\.\d+)?$")
+
+
 def es_vecina(nombre):
     """Las casas clonadas a +-7 m llevan sufijo `_v1`, `_v-1`, `_v2`... La de
-    verdad es la que NO lo lleva."""
-    cola = nombre.rsplit("_", 1)[-1]
-    return cola.startswith("v") and cola[1:].lstrip("-").isdigit()
+    verdad es la que NO lo lleva.
+
+    Con regex y no con `rsplit`: Blender le agrega `.001` a los duplicados, y
+    `pb_muro_oeste_sala_v-1.001` partido por el ultimo `_` da `v-1.001`, que no
+    es digito, asi que la copia se colaba. Salian a UN METRO de la camara y el
+    render entero era gris plano."""
+    return bool(_VECINA.search(nombre))
 
 
 MUROS = []          # se llena una sola vez, ANTES de que la camara del corte
@@ -293,54 +300,43 @@ CENTRO = (4.00, 11.10, 1.40)      # el medio de la casa: x 1.10-6.90, y 6.67-15.
 DESVIO_Y = float(os.environ.get("DESVIO_Y", "0.30"))
 
 
-def camara_del_corte(dist, alt, lente):
-    """La casa sola, en seccion, vista desde el PONIENTE (-X).
+# EL ENCUADRE ES EL DE CARLOS, leido de su Blender por el conector el 3 sep
+# 2026 a las 22:05. No se invento: el lo puso en pantalla y se saco del
+# `region_3d` del visor. Se puede pisar con variables de entorno.
+OJO = [float(v) for v in os.environ.get("OJO", "-6.461,11.858,1.785").split(",")]
+MIRA = [float(v) for v in os.environ.get("MIRA", "5.126,11.012,0.74").split(",")]
+LENTE = float(os.environ.get("LENTE", "50"))
 
-    COMO ESTA PUESTA LA CASA, que es lo que costo entender: la FACHADA da a
-    -Y (la calle esta en y < 6.67) y el fondo con el balcon a y 15.52. La fila
-    de casas corre en X, asi que los muros `muro_oeste` (x ~ 1.10) son la
-    MEDIANERA. Quitandolos, la casa se abre de lado y se ven los tres niveles
-    apilados en seccion — que es justo el corte que se quiere.
 
-    LO QUE TAPABA LA TOMA, y por que el filtro de `max(x) < 1.25` no bastaba:
-    hay mallas SUELTAS gigantes que cruzan toda la escena — `VEC_fila_extra`
-    va de x -56 a 63, `VEC_enfrente_extra`, `VEC_cerro_sube/cae`,
-    `frente_losa_extra`, `frente_pasto_extra`. Como su x maxima es enorme,
-    ningun filtro por posicion las agarra, y desde el poniente son un muro
-    negro delante de la casa. Se apagan por nombre.
+def camara_del_corte(_dist, _alt, _lente):
+    """La camara de Carlos, tal cual, y la casa sola.
 
-    Para el corte se deja la casa SOLA sobre el terreno: la calle y las vecinas
-    las pone despues la IA con las fotos reales, y sin ellas la geometria se lee
-    mucho mejor.
+    Los tres argumentos ya no se usan: quedaron por compatibilidad con la linea
+    de comandos. El encuadre viene de OJO / MIRA / LENTE.
+
+    Que se apaga, y por que:
+      · TODO lo que no sea la casa. Su ojo esta en x -6.46, o sea DENTRO de la
+        vecina clonada del poniente (`_v-1` va de x -5.9 a -0.1). Con la fila
+        puesta, la toma es una hilera de casas y no un corte.
+      · La piel PONIENTE de la casa, que es la tapa del corte: los muros que
+        quedan entre el ojo y el centro. Se decide proyectando el centro de
+        cada muro sobre la direccion de vista, igual que en el Blender de
+        Carlos — asi lo que se renderiza aqui es lo mismo que el esta viendo.
+      · El terreno: el nivel n1 esta enterrado y el cerro se lo come.
     """
     sc = bpy.context.scene
-    centro = Vector(CENTRO)
-    # El desplazamiento en Y va POSITIVO. Con -0.38 la camara quedaba al
-    # SUR-poniente, o sea enfrente de la FACHADA (y ~ 6.6), y la fachada tapaba
-    # el corte: media imagen era un muro negro. Desde el norte-poniente se mira
-    # el costado abierto y la fachada queda de canto.
-    pos = centro + Vector((-dist, dist * DESVIO_Y, alt))
+    ojo, mira = Vector(OJO), Vector(MIRA)
 
     cd = bpy.data.cameras.new("CAM_CORTE")
-    cd.lens = lente
-    cd.clip_start, cd.clip_end = 0.1, 3000.0
+    cd.lens = LENTE
+    cd.clip_start, cd.clip_end = 0.05, 3000.0
     c2 = bpy.data.objects.new("CAM_CORTE", cd)
     sc.collection.objects.link(c2)
-    c2.location = pos
-    c2.rotation_euler = (centro - pos).to_track_quat('-Z', 'Y').to_euler()
+    c2.location = ojo
+    c2.rotation_euler = (mira - ojo).to_track_quat('-Z', 'Y').to_euler()
     sc.camera = c2
 
-    # SE ENCIENDE POR LISTA BLANCA, no por lista negra. Apagando "lo que
-    # estorba" nunca se acababa: la colonia de OSM, las mallas sueltas que
-    # cruzan toda la escena (`VEC_fila_extra` va de x -56 a 63) y, sobre todo,
-    # las CASAS CLONADAS de la fila, que no viven en ninguna coleccion VECINAS
-    # y estan del lado bueno de cualquier filtro por posicion. La toma salia
-    # siempre como una hilera de casas en vez de UNA casa en seccion.
-    #
-    # Asi que se apaga TODO lo que no sea la casa: solo sobrevive lo que tiene
-    # su centro dentro de la huella (x 1.10-6.90, y 6.67-15.52, con holgura) y
-    # el terreno, que hace de suelo. La calle y las vecinas las pone despues la
-    # IA con las fotos reales.
+    hacia = Vector((mira.x - ojo.x, mira.y - ojo.y, 0.0)).normalized()
     x0, x1, y0, y1 = CASA
     m = 1.2
     PISO = ("TER", "MAR", "ESPUMA", "tierra", "TALUD")
@@ -348,11 +344,6 @@ def camara_del_corte(dist, alt, lente):
     for o in sc.objects:
         if o.type != 'MESH':
             continue
-        # El TERRENO tambien fuera. El nivel n1 esta ENTERRADO (z -2.75 a -0.20)
-        # y la casa se apoya en una ladera: con el suelo puesto, desde cualquier
-        # camara baja el cerro tapa el nivel de abajo y el corte pierde un piso
-        # entero. Sin suelo queda la casa flotando, que es exactamente como se
-        # dibuja una casa de munecas.
         if o.name.startswith(PISO):
             if not o.hide_render:
                 o.hide_render = True
@@ -362,27 +353,20 @@ def camara_del_corte(dist, alt, lente):
         ax, bx = min(v.x for v in b), max(v.x for v in b)
         ay, by = min(v.y for v in b), max(v.y for v in b)
         cx, cy = (ax + bx) / 2, (ay + by) / 2
-        # No basta con que el CENTRO caiga dentro. `VEC_fila_extra` es UNA sola
-        # malla con toda la hilera de vecinas — va de x -56 a 63 — y esta
-        # centrada justo sobre la casa, asi que pasaba la lista blanca y era la
-        # "hilera de casas" que salia en cada prueba. Tambien tiene que CABER:
-        # la casa mide 5.8 x 8.85 m, nada de la casa es mas grande que eso.
+        # tiene que CABER en la casa: `VEC_fila_extra` es una sola malla de
+        # x -56 a 63 centrada justo sobre ella, y pasaba cualquier prueba de
+        # centro
         cabe = (bx - ax) <= (x1 - x0) + 3.0 and (by - ay) <= (y1 - y0) + 3.0
         dentro = cabe and (x0 - m <= cx <= x1 + m) and (y0 - m <= cy <= y1 + m)
-        # La TAPA DEL CORTE es toda la piel poniente, no solo los `muro_oeste`:
-        # tambien `a2_canto_poniente` y `a2_muro_izq_*`, que son cantos y aletas
-        # con otro nombre. Se quita cualquier pieza que viva entera en los
-        # primeros 55 cm del lado poniente.
-        tapa = "muro_oeste" in o.name or bx <= x0 + 0.55
-        if dentro and not tapa and not es_vecina(o.name):
-            if o.hide_render and not o.name.endswith("_fantasma"):
-                pass                       # lo escondio limpia(): que siga asi
-        else:
-            if not o.hide_render:
-                o.hide_render = True
-                n += 1
-    print("escondidos para abrir el corte:", n, "· camara en",
-          [round(v, 2) for v in pos])
+        # la tapa del corte: delgado, alto y del lado del ojo
+        delgado = min(bx - ax, by - ay) < 0.40 and (max(v.z for v in b) - min(v.z for v in b)) > 1.5
+        tapa = delgado and Vector((cx - CENTRO[0], cy - CENTRO[1], 0.0)).dot(hacia) < 0.0
+        if dentro and not tapa and not es_vecina(o.name) and not o.name.endswith("_fantasma"):
+            continue
+        if not o.hide_render:
+            o.hide_render = True
+            n += 1
+    print("escondidos:", n, "· ojo", OJO, "· mira", MIRA, "· lente", LENTE)
     sc.frame_set(CUADRO)
     bpy.context.view_layer.update()
     return c2
@@ -443,7 +427,10 @@ def saca(ruta):
 
 
 a = sys.argv[sys.argv.index("--") + 1:]
-ATRAS, ARRIBA, LENTE, DIR = float(a[0]), float(a[1]), float(a[2]), a[3]
+# OJO: no se llaman LENTE ni nada que pise las constantes de arriba — la
+# primera vez el `LENTE` de la linea de comandos machaco el de OJO/MIRA/LENTE
+# y la camara salio con lente 0.
+_A, _B, _C, DIR = float(a[0]), float(a[1]), float(a[2]), a[3]
 W = int(a[4]) if len(a) > 4 else 1536
 H = int(a[5]) if len(a) > 5 else 1152
 QUE = a[6] if len(a) > 6 else "todo"
@@ -454,7 +441,7 @@ sc.frame_set(CUADRO)
 bpy.context.view_layer.update()
 print("escondidos por limpia():", limpia())
 apunta_muros()
-camara_del_corte(ATRAS, ARRIBA, LENTE)
+camara_del_corte(_A, _B, _C)
 
 r = sc.render
 r.resolution_x, r.resolution_y, r.resolution_percentage = W, H, 100

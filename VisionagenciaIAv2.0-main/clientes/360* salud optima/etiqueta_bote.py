@@ -71,8 +71,13 @@ def saca_sprites():
     w, h = im.size
     for nom, (a, b, c, d) in {
             "banda_arriba": (0, 0, 1, .185),
-            "banda_abajo": (0, .755, 1, 1),
-            "sello": (.560, .425, .685, .640),
+            # OJO: a .755 el recorte se lleva PEGADO el «CONTENIDO: 30
+            # CÁPSULAS» de su v5, y al escribir el nuestro encima salia doble.
+            # Se corta por debajo de esa linea.
+            "banda_abajo": (0, .815, 1, 1),
+            # el recorte del sello arrastraba un pedazo del filete de oro de su v5, que
+            # quedaba flotando arriba a la izquierda: se aprieta.
+            "sello": (.582, .448, .682, .630),
             "wa": (.310, .590, .365, .705)}.items():
         im.crop((int(a * w), int(b * h), int(c * w), int(d * h))).save(
             os.path.join(SPRITES, nom + ".png"))
@@ -104,16 +109,19 @@ def regla(d, x0, x1, y, color=ORO, gr=None):
 
 
 # ------------------------------------------------------------------ contenido
-INGREDIENTES = ("Piel de camarón", "Boswellia Serrata", "Calcio", "Magnesio",
-                "Extracto de naranja", "Extracto de limón",
-                "Extracto de semilla de uva (Resveratrol)")
+# Lista de Angel del 3 sep 15:32, con «Extracto» en vez de «cascara» (15:42) y
+# la Vitamina D enseguida del Calcio (20:42).
+INGREDIENTES = ("Piel de camarón", "Boswellia Serrata", "Calcio", "Vitamina D",
+                "Magnesio", "Extracto de naranja", "Extracto de limón",
+                "Extracto de semilla de uva", "(Resveratrol)")
 
 MODO = ("2 cápsulas con los alimentos", "por la mañana, diariamente")
 UTIL = ("Regenerador de cartílagos", "Anti-estrés")
-LEGAL_D = ("Indicado para mayores de 18 años en adelante.",)
-LEGAL_D2 = ("Este producto no es un medicamento,", "es responsabilidad de quien lo",
-            "recomienda y lo usa.")
-PIE = "No se deje al alcance de los niños  ·  Manténgase en un lugar fresco y seco"
+LEGAL = ("Indicado para mayores de 18 años en adelante.",
+         "No se deje al alcance de los niños.",
+         "Manténgase en un lugar fresco y seco.",
+         "Este producto no es un medicamento, es",
+         "responsabilidad de quien lo recomienda y lo usa.")
 CADUCIDAD = "CADUCIDAD:  DIC 2028"
 
 MODELOS = {
@@ -121,6 +129,56 @@ MODELOS = {
     "raramore30": ("Rar ~ Amore", 30),
     "raramore60": ("Rar ~ Amore", 60),
 }
+
+# (texto, fuente, pt, color, interlinea, hueco que va ANTES en mm)
+def bloques_izq():
+    return [("INGREDIENTES:", SERIF, 9.5, ORO, 1.2, 0.0, 1)] + \
+           [(t, SERIF, 8.6, CREMA, 1.22, (1.6 if i == 0 else 0.0), 0)
+            for i, t in enumerate(INGREDIENTES)]
+
+
+def bloques_der():
+    b = [("ÚTIL PARA:", SERIF, 9.5, ORO, 1.2, 0.0, 1)]
+    b += [(t, SERIF, 8.6, CREMA, 1.22, (1.6 if i == 0 else 0.0), 0)
+          for i, t in enumerate(UTIL)]
+    b += [("MODO DE USO:", SERIF, 9.5, ORO, 1.2, 3.0, 1)]
+    b += [(t, SERIF, 8.6, CREMA, 1.22, (1.6 if i == 0 else 0.0), 0)
+          for i, t in enumerate(MODO)]
+    b += [(t, SERIF, 7.4, CREMA, 1.22, (3.0 if i == 0 else 0.0), 0)
+          for i, t in enumerate(LEGAL)]
+    return b
+
+
+def columna(d, im, x_mm, an_mm, y0_mm, y1_mm, bloques):
+    """Escribe los bloques entre y0 e y1, encogiendo TODO si no caben.
+
+    La v6 iba con posiciones fijas y se encimaba: «PEDIDOS WHATSAPP» debajo del
+    sello, «CONTENIDO» encima del modo de uso. Aqui se mide primero y, si no
+    entra a lo alto o a lo ancho, baja el cuerpo de la columna entera. Misma
+    leccion que el librito.
+    """
+    an = an_mm * MM
+    factor = 1.0
+    while factor > 0.45:
+        alto = 0.0
+        cabe = True
+        for texto, fam, pt, _c, inter, antes, _e in bloques:
+            fu = f(fam, pt * factor)
+            if d.textlength(texto, font=fu) > an:
+                cabe = False
+                break
+            alto += antes * MM + fu.size * inter
+        if cabe and alto <= (y1_mm - y0_mm) * MM:
+            break
+        factor -= 0.02
+    y = y0_mm * MM
+    for texto, fam, pt, color, inter, antes, esp in bloques:
+        fu = f(fam, pt * factor)
+        y += antes * MM
+        t = " ".join(texto) if esp else texto
+        d.text((x_mm * MM, y), t, font=fu, fill=color)
+        y += fu.size * inter
+    return factor
 
 
 def haz(clave):
@@ -134,74 +192,51 @@ def haz(clave):
     d = ImageDraw.Draw(im)
     mm = lambda v: int(v * MM)
 
-    # ---- columna izquierda: ingredientes y modo de uso ----------------------
-    # Antes eran 5 pt y una sola linea de ingredientes; ahora 7.4 y siete.
-    x = mm(9)
-    y = mm(13.5)
-    y = linea(d, x, y, "INGREDIENTES:", f(SERIF, 9), ORO, esp=1) + mm(1.4)
-    y = parrafo(d, x, y, INGREDIENTES, f(SERIF, 8.4), CREMA, inter=1.22)
-    y += mm(2.2)
-    y = linea(d, x, y, "MODO DE USO:", f(SERIF, 9), ORO, esp=1) + mm(1.4)
-    parrafo(d, x, y, MODO, f(SERIF, 8.4), CREMA, inter=1.22)
+    # Tres columnas y un pie. El sello y el bloque del centro NO se solapan
+    # porque el centro va centrado en x=78 (no en la mitad de la etiqueta),
+    # igual que en su v5, y el sello vive a su derecha.
+    columna(d, im, 8, 42, 13.5, 48.5, bloques_izq())
+    columna(d, im, 120, 36, 13.5, 48.5, bloques_der())
 
-    # ---- columna derecha: para que sirve y lo legal -------------------------
-    x = mm(112)
-    y = mm(13.5)
-    y = linea(d, x, y, "ÚTIL PARA:", f(SERIF, 9), ORO, esp=1) + mm(1.4)
-    y = parrafo(d, x, y, UTIL, f(SERIF, 8.4), CREMA, inter=1.22)
-    y += mm(1.6)
-    regla(d, x, mm(155), y)
-    y += mm(2.4)
-    y = parrafo(d, x, y, LEGAL_D, f(SERIF, 7.4), CREMA, inter=1.22)
-    y += mm(1.8)
-    parrafo(d, x, y, LEGAL_D2, f(SERIF, 7.4), CREMA, inter=1.22)
-
-    # ---- centro: el nombre, que NO se toca de tamaño ------------------------
-    cx = mm(60) + (mm(106) - mm(60)) // 2
-    y = mm(14.5)
+    # ---- centro: el nombre, que NO se toca de tamano ------------------------
+    cx = mm(78)
+    y = mm(14.0)
     fu = f(SERIF, 30)
-    while d.textlength(nombre, font=fu) > mm(50):
+    while d.textlength(nombre, font=fu) > mm(44):
         fu = f(SERIF, fu.size * 2.845 / MM - 0.5)
     y = linea(d, 0, y, nombre, fu, CREMA, centro=cx)
-    y += mm(1.6)
-    regla(d, cx - mm(23), cx + mm(23), y)
-    y += mm(2.0)
-    y = linea(d, 0, y, "CÁPSULAS", f(SERIF, 11), CREMA, esp=1, centro=cx) + mm(3.0)
+    y += mm(1.4)
+    regla(d, cx - mm(21), cx + mm(21), y)
+    y += mm(1.8)
+    y = linea(d, 0, y, "CÁPSULAS", f(SERIF, 11), CREMA, esp=1, centro=cx) + mm(3.2)
 
     wa = sprite("wa")
-    alto_wa = mm(6.2)
+    alto_wa = mm(5.8)
     wa = wa.resize((int(wa.width * alto_wa / wa.height), alto_wa), Image.LANCZOS)
-    fu_ped = f(SERIF, 10)
-    ancho_ped = d.textlength("P E D I D O S   W H A T S A P P", font=fu_ped)
-    x_wa = int(cx - (wa.width + mm(2) + ancho_ped) / 2)
+    fu_ped = f(SERIF, 8.0)
+    ped = "P E D I D O S   W H A T S A P P"
+    x_wa = int(cx - (wa.width + mm(2) + d.textlength(ped, font=fu_ped)) / 2)
     im.paste(wa, (x_wa, int(y)))
-    d.text((x_wa + wa.width + mm(2), y + mm(0.6)),
-           "P E D I D O S   W H A T S A P P", font=fu_ped, fill=ORO)
-    y += mm(6.6)
-    linea(d, 0, y, "81 8466 8456", f(SERIF, 15), CREMA, centro=cx)
+    d.text((x_wa + wa.width + mm(2), y + mm(0.5)), ped, font=fu_ped, fill=ORO)
+    y += mm(6.2)
+    linea(d, 0, y, "81 8466 8456", f(SERIF, 14), CREMA, centro=cx)
 
     sel = sprite("sello")
-    alto_sel = mm(13)
+    alto_sel = mm(12)
     sel = sel.resize((int(sel.width * alto_sel / sel.height), alto_sel), Image.LANCZOS)
-    im.paste(sel, (mm(98), mm(27)))
+    im.paste(sel, (mm(102), mm(31)))
 
-    # ---- pie: contenido, caducidad y las dos leyendas ----------------------
-    # Aqui la guirnalda deja un claro al centro; es donde su v5 ponia CONTENIDO.
-    cxx = W // 2
-    y = mm(50.5)
+    # ---- pie: contenido y caducidad, en el claro de la guirnalda ----------
+    y = mm(50.3)
     t = "CONTENIDO: %d CÁPSULAS      ·      %s" % (capsulas, CADUCIDAD)
     fu = f(SERIF, 9.5)
     an = d.textlength(t, font=fu)
-    d.text((cxx - an / 2, y), t, font=fu, fill=CREMA)
-    regla(d, cxx - an / 2 - mm(8), cxx - an / 2 - mm(2.5), y + fu.size * 0.55)
-    regla(d, cxx + an / 2 + mm(2.5), cxx + an / 2 + mm(8), y + fu.size * 0.55)
+    d.text((cx - an / 2, y), t, font=fu, fill=CREMA)
+    regla(d, cx - an / 2 - mm(8), cx - an / 2 - mm(2.5), y + fu.size * 0.55)
+    regla(d, cx + an / 2 + mm(2.5), cx + an / 2 + mm(8), y + fu.size * 0.55)
 
-    y += mm(4.6)
-    fu = f(SERIF, 7.8)
-    d.text((cxx - d.textlength(PIE, font=fu) / 2, y), PIE, font=fu, fill=ORO)
-
-    png = os.path.join(AQUI, "360_%s_IMPRENTA_v6.png" % clave.upper())
-    pdf = os.path.join(AQUI, "360_%s_IMPRENTA_v6.pdf" % clave.upper())
+    png = os.path.join(AQUI, "360_%s_IMPRENTA_v7.png" % clave.upper())
+    pdf = os.path.join(AQUI, "360_%s_IMPRENTA_v7.pdf" % clave.upper())
     im.save(png, dpi=(DPI, DPI))
     im.save(pdf, resolution=DPI, title="360 Salud Óptima · %s" % nombre)
     print("  %-11s %s  (%.1f x %.1f mm)" % (clave, os.path.basename(pdf), ANCHO_MM, ALTO_MM))
