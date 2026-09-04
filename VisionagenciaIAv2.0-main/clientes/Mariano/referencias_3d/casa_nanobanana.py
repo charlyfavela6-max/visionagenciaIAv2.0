@@ -41,78 +41,102 @@ WAVESPEED = "https://api.wavespeed.ai/api/v3"
 MODELO = "google/nano-banana-pro/edit-multi"
 
 # (ruta, que aporta esa imagen). El ORDEN importa: el prompt las nombra.
+# OCHO como maximo: con 14 el proveedor rechaza la peticion.
 #
-# OCHO, no catorce. El schema dice `maxItems: 14`, pero con las 14 el proveedor
-# tumbaba la peticion («The provider rejected the request») aunque fueran
-# reducidas; con 3 pasa y con 8 tambien. Se quedan las de los cuartos que de
-# verdad se ven en el corte; el bano, la cocina y el vestidor se describen con
-# palabras en el prompt, que para material alcanza.
+# Estas seis son las tomas del video del 3 sep que Carlos senalo como las que
+# hay que respetar — sala de abajo, sala de arriba con la TV, comedor, cocineta,
+# bano y terraza.
+V3 = os.path.join(RAIZ, "clientes/Mariano/de_whatsapp/video_3sep")
 REFS = [
     (os.path.join(CORTE, "corte_gris.png"), "grey 3D cutaway — the volume"),
     (os.path.join(CORTE, "corte_aristas.png"), "line drawing — the structure"),
-    (os.path.join(VIDEO, "f01.jpg"), "ground-floor living room"),
-    (os.path.join(VIDEO, "f09.jpg"), "slatted wood TV wall"),
-    (os.path.join(VIDEO, "f10.jpg"), "dining + kitchen, wine-red sofa"),
-    (os.path.join(VIDEO, "f07.jpg"), "bedroom with cream armchair"),
-    (os.path.join(VIDEO, "f11.jpg"), "roof terrace with planter"),
-    (os.path.join(VIDEO, "f05.jpg"), "wooden stair"),
 ]
+# TRES imagenes, no ocho. Con las fotos de interior puestas, el modelo se metia
+# DENTRO de la casa: probado tres veces (casa_v3, v4, v5) — la v5 acabo siendo
+# una foto de la terraza. Las fotos de interior le ganan al encuadre. Los
+# acabados van descritos con palabras, que para material alcanza, y las tres
+# imagenes que quedan son las que mandan la geometria.
 
+# Cinco intentos (v3 a v7) acabaron todos ACERCANDOSE a un piso, aunque el
+# prompt pidiera lo contrario y aunque se le diera una imagen de encuadre. Lo
+# que si funciona es cambiarle el SUJETO: en vez de «una casa en corte» —que le
+# suena a fotografia de arquitectura y se mete dentro— se le pide el
+# PORTAFOLIO de un MODELO A ESCALA sobre una mesa. Un objeto se fotografia
+# entero; un interior, no.
+# El encuadre se resolvio pidiendo un MODELO A ESCALA sobre una mesa: cinco
+# intentos como «casa en corte» acabaron todos metidos dentro de un piso. Un
+# objeto se fotografia entero; un interior, no. Las maquetas de arquitectura
+# llevan figuritas, asi que las personas y el perrito que pidio Angel caben sin
+# romper el truco.
 PROMPT = (
-    "Turn this into ONE photorealistic architectural CUTAWAY photograph of a "
-    "three-storey house — a doll's-house view with the near side wall removed, "
-    "so all three floors are open and visible at once, fully furnished and "
-    "finished.\n\n"
+    "A studio product photograph of a highly detailed ARCHITECTURAL SCALE "
+    "MODEL of a three-storey house, standing on a plain table, photographed "
+    "from a few metres away so THE WHOLE MODEL IS INSIDE THE FRAME with empty "
+    "space around it. One single object seen complete — not an interior "
+    "photograph, not a close-up of one floor.\n\n"
 
-    "IMAGE 1 is the grey 3D render and IMAGE 2 is its line drawing. TOGETHER "
-    "THEY ARE THE LAW — the geometry is already decided:\n"
-    "  · Keep the CAMERA exactly: same angle, same height, same lens. Do not "
-    "re-centre, do not flatten it, do not zoom.\n"
-    "  · Keep EVERY floor slab, EVERY wall and EVERY opening where the line "
-    "drawing puts them. Do not add a wall, do not remove a wall, do not move a "
-    "doorway, do not invent a courtyard or a staircase that is not drawn.\n"
-    "  · Keep EVERY piece of furniture in its exact place and at its exact "
-    "size. The beds, the sofas, the tables and the shelves are already "
-    "positioned — you are painting them, not re-arranging them.\n"
-    "  · Three levels, bottom to top: LOWER FLOOR with two bedrooms, a "
-    "bathroom, a study, a storeroom and a laundry; MIDDLE FLOOR with the "
-    "living room, the master bedroom, the walk-in closet, the master bathroom "
-    "and the stair; TOP FLOOR open-plan with kitchen, dining and a second "
-    "living area; and above it the open ROOF TERRACE.\n\n"
+    "The model is a cutaway: its near side wall is removed, so all three floors "
+    "are open and every room is visible at once, each fully furnished and "
+    "finished in photorealistic materials.\n\n"
 
-    "IMAGES 3 to 8 are photographs of the REAL house. Take from them ONLY the "
-    "materials, colours and light:\n"
-    "  · ground-floor living room: curved CREAM boucle sofa, CAMEL leather "
-    "armchair, round TRAVERTINE coffee table, large abstract canvas in beige "
-    "and black;\n"
-    "  · a feature wall of vertical WOOD SLATS with the TV, an open shelf unit "
-    "and a big fiddle-leaf plant;\n"
-    "  · dining and kitchen upstairs: a WINE-RED / deep burgundy sofa, a round "
-    "pale-wood table with cream chairs, a wood-fronted island with a white "
-    "top, a thin brass ring pendant lamp;\n"
-    "  · bedrooms: upholstered headboards, cream bedding with a chocolate "
-    "brown throw, a rounded cream armchair, sheer curtains over "
-    "floor-to-ceiling black-framed sliding windows;\n"
-    "  · bathrooms: WOOD-LOOK tile with a dark brown band, floating wood "
-    "vanity, white basin;\n"
-    "  · stair: pale tile treads, white walls, very thin black metal railing;\n"
-    "  · closet: open shelves in pale oak;\n"
-    "  · laundry: plain room with the water outlets on a white wall;\n"
-    "  · ROOF TERRACE: pale floor tile, low white parapet, a TEAK table with "
-    "chairs and a REAL PLANTER WITH GREEN PLANTS along the parapet — the roof "
-    "is NOT bare;\n"
-    "  · back yard: artificial turf and a grey concrete block retaining wall.\n"
-    "  · Everywhere: big beige floor tiles, smooth white plaster walls. The "
-    "walls are FLAT PLASTER AND CONCRETE, never rough limestone or stucco "
-    "texture.\n\n"
+    "IMAGE 1 is the grey render of this model and IMAGE 2 its line drawing. "
+    "TOGETHER THEY ARE THE LAW. Reproduce image 1 at EXACTLY the same size and "
+    "position in the frame. Keep every floor slab, wall, opening and piece of "
+    "furniture where the drawings put them. Do not add or remove a wall, do "
+    "not invent a courtyard, do not rearrange furniture.\n\n"
 
-    "FINISH THE WHOLE PICTURE. Every room must be fully furnished and lit — do "
-    "not leave any room as a white blocky model, and do not leave any piece of "
-    "furniture as a plain grey box: if a shape reads as a box in image 1, it is "
-    "a real piece of furniture and you must paint it as one.\n\n"
+    "THREE floors. The roof terrace is NOT a fourth floor: it is the open part "
+    "of the top floor, on the same slab as the kitchen and dining.\n\n"
 
-    "Natural daylight from outside, soft shadows, clean architectural "
-    "photography. No text, no labels, no watermark, no people."
+    "THREE THINGS THE LAST ATTEMPT GOT WRONG — get them right:\n"
+    "  1. THE ROOF TERRACE has exactly THREE SEPARATE rectangular CONCRETE "
+    "PLANTERS standing apart from each other along the parapet, each FULL of "
+    "big glossy split-leaf philodendron foliage spilling over the rim. Not one "
+    "long continuous planter, not empty boxes, not small pots.\n"
+    "  2. THE TOP-FLOOR LIVING ROOM has a large flat-screen TV mounted on a "
+    "wall of VERTICAL WOOD SLATS, with a wood panel above it and a wood ledge "
+    "below. The TV must be there and must be on that slatted panel.\n"
+    "  3. THE KITCHENETTE window is a SMALL WIDE HORIZONTAL window above the "
+    "counter — wider than it is tall, black frame, two panes. It is NOT a tall "
+    "vertical window.\n\n"
+
+    "EVERY ROOM MUST LOOK DIFFERENT from the others — different palette, "
+    "different furniture, its own character. Do not repeat the same bedroom "
+    "three times:\n"
+    "  · LOWER FLOOR — front bedroom: upholstered headboard, cream bedding, "
+    "CHOCOLATE throw, DARK GREEN rug, a cream armchair. Back bedroom: a "
+    "headboard of vertical wood slats, terracotta throw, wood nightstand, no "
+    "green rug. Bathroom: OPEN walk-in shower with NO glass screen, wood-look "
+    "tile with a dark brown band, small horizontal window, floating wood "
+    "vanity. Study: desk, monitor, pale-oak grid bookcase full of books, rug, "
+    "big fiddle-leaf plant. Laundry: plain white, washer and dryer. "
+    "Storeroom: open oak shelves with boxes.\n"
+    "  · MIDDLE FLOOR — living room: curved CREAM boucle sofa, CAMEL leather "
+    "armchair, round TRAVERTINE table, large abstract canvas, a wall of "
+    "vertical wood slats. Master bedroom: ARCHED TUFTED headboard against a "
+    "CHOCOLATE wall, cream quilted bedding, rattan pendant. Walk-in closet: "
+    "pale oak, four open cubbies above, eight drawers below. Master bathroom: "
+    "same open shower. Stair: pale treads, thin BLACK railing, one big "
+    "abstract artwork.\n"
+    "  · TOP FLOOR — WINE-RED curved sofa, cream rounded armchair, OVAL "
+    "pale-wood table, the slatted TV wall; dining with a round pale-wood "
+    "table, cream chairs, a single LOOPED white LED pendant, TWO white candles "
+    "on a black tray, TWO beige art panels; and the compact L-shaped "
+    "kitchenette with a wood island, thick WHITE top and white upper "
+    "cabinets.\n\n"
+
+    "LIFE IN THE HOUSE — small photorealistic scale figures, natural, not "
+    "posed: a SMILING couple sitting on the wine-red sofa upstairs, a person "
+    "reading in the cream armchair downstairs, someone at the dining table. "
+    "And on the middle floor beside the sofa, a SMALL DOG lying in its own "
+    "round dog bed. In the top-floor living area add a GAMING / HOME-CINEMA "
+    "corner: a low console under the TV with a game controller on it and a "
+    "soft floor cushion facing the screen.\n\n"
+
+    "Everywhere: big BEIGE floor tiles, smooth white plaster walls (flat "
+    "plaster and concrete, never rough limestone), black-framed windows, warm "
+    "daylight. Every room fully finished — no white blocky rooms, no grey "
+    "boxes. No text, no watermark."
 )
 
 

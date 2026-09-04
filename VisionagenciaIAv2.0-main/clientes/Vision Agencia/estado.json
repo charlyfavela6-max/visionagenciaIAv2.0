@@ -1,0 +1,67 @@
+{
+  "cliente": "Vision Agencia",
+  "telefono": null,
+  "fase_actual": "video",
+  "oferta": null,
+  "unicornio_referencia": null,
+  "guion": {
+    "texto": null,
+    "version": null
+  },
+  "voz": {
+    "clonada": false,
+    "version": null,
+    "banco_voz_default": null,
+    "audio_path": null
+  },
+  "fotos_referencia": [],
+  "ancla_identidad": {
+    "descripcion_prenda": null,
+    "descripcion_rostro": null
+  },
+  "escenas": {
+    "hook": {
+      "estado": "pendiente",
+      "path": null
+    },
+    "demo": {
+      "estado": "pendiente",
+      "path": null
+    },
+    "trust": {
+      "estado": "pendiente",
+      "path": null
+    },
+    "cta": {
+      "estado": "pendiente",
+      "path": null
+    }
+  },
+  "video": {
+    "estado": "pendiente",
+    "path": null
+  },
+  "publicacion": {
+    "facebook": null,
+    "meta_ads": null,
+    "admin_agregado": false
+  },
+  "metricas": {
+    "datos": null,
+    "ultima_actualizacion": null
+  },
+  "historial": [
+    {
+      "ts": "2026-07-06T19:51:32.755Z",
+      "fase": "oferta",
+      "accion": "estado inicial creado (template)"
+    },
+    {
+      "ts": "2026-07-06T21:15:11.364Z",
+      "fase": "video",
+      "accion": "status real detectado en auditoria: infinitetalk 25s generado, pitch propio, falta pulir"
+    }
+  ],
+  "createdAt": "2026-07-06T19:51:32.755Z",
+  "updatedAt": "2026-07-06T21:15:11.364Z"
+}

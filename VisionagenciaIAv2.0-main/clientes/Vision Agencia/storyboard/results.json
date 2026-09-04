@@ -1,0 +1,27 @@
+[
+  {
+    "index": 0,
+    "name": "Teléfono en la mano",
+    "error": "400 The model 'dall-e-3' does not exist."
+  },
+  {
+    "index": 1,
+    "name": "Teléfono en la oreja",
+    "error": "400 The model 'dall-e-3' does not exist."
+  },
+  {
+    "index": 2,
+    "name": "Chicle explotando",
+    "error": "400 The model 'dall-e-3' does not exist."
+  },
+  {
+    "index": 3,
+    "name": "Fumando",
+    "error": "400 The model 'dall-e-3' does not exist."
+  },
+  {
+    "index": 4,
+    "name": "CTA – Mirada a cámara",
+    "error": "400 The model 'dall-e-3' does not exist."
+  }
+]

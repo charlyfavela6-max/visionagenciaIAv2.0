@@ -154,61 +154,75 @@ def arma():
     y = int(99 * MM)
     d.line([(W // 2 - int(26 * MM), y), (W // 2 + int(26 * MM), y)],
            fill=VERDE, width=6)
-    centro(d, int(103 * MM), "B Á L S A M O   ·   C Á P S U L A S",
-           f("Montserrat-Medium.ttf", 9.5), color=VERDE_CLARO)
+    centro(d, int(100 * MM), "B Á L S A M O   ·   C Á P S U L A S",
+           f("Montserrat-Medium.ttf", 13), color=VERDE_CLARO)
 
-    centro(d, int(114 * MM), "Vive sin dolores.\nVive sin estrés.\nVive sin insomnio.",
-           f("CormorantGaramond-Bold.ttf", 18), interlinea=1.5, x0=m, an=util)
+    centro(d, int(110 * MM), "Vive sin dolores.\nVive sin estrés.\nVive sin insomnio.",
+           f("CormorantGaramond-Bold.ttf", 24), interlinea=1.45, x0=m, an=util)
 
-    centro(d, int(148 * MM), "COMIENZA A CUIDARTE A PARTIR DE LOS 30",
-           f("Montserrat-Medium.ttf", 8.5), color=VERDE_CLARO, x0=m, an=util)
+    centro(d, int(150 * MM), "COMIENZA A CUIDARTE A PARTIR DE LOS 30",
+           f("Montserrat-Medium.ttf", 12), color=VERDE_CLARO, x0=m, an=util)
 
-    centro(d, int(158 * MM), "LAS CÁPSULAS CONTIENEN",
-           f("Montserrat-Black.ttf", 8), color=VERDE_CLARO, x0=m, an=util)
+    centro(d, int(160 * MM), "LAS CÁPSULAS CONTIENEN",
+           f("Montserrat-Black.ttf", 11.5), color=VERDE_CLARO, x0=m, an=util)
 
     # dos columnas, y el sello en el hueco que queda al centro
     # La lista de Angel del 3 sep, con sus tres correcciones: «Extracto» en vez
     # de «cascara», «(Resveratrol)» y la Vitamina D enseguida del Calcio.
-    izq = ("Piel de camarón", "Boswelia serrata", "Calcio", "Vitamina D")
-    der = ("Magnesio", "Extracto de naranja", "Extracto de limón",
-           "Extracto de semilla de uva (Resveratrol)")
-    # «Extracto de semilla de uva (Resveratrol)» ya no cabe a 9 pt en media
-    # hoja: se baja el cuerpo hasta que la linea mas larga entre en la columna.
-    fu = f("Montserrat-Medium.ttf", 9)
-    pt = 9.0
-    while pt > 5 and max(d.textlength(t, font=f("Montserrat-Medium.ttf", pt))
-                         for t in izq + der) > int(88 * MM):
+    # Angel mando la lista TAL CUAL la quiere para el cartel del mostrador
+    # (3 sep 22:47), con las dos correcciones que el mismo pidio antes:
+    # «Extracto» en vez de «cascara» (15:42) y Vitamina D tras el Calcio (20:42).
+    # En un cartel de mostrador se lee de pie y de lejos: van en UNA columna
+    # centrada y grande, no en dos columnas chicas.
+    TODOS = ("Piel de camarón", "Boswelia serrata", "Calcio", "Vitamina D",
+             "Magnesio", "Extracto de naranja", "Extracto de limón",
+             "Extracto de semilla de uva", "(Resveratrol)")
+    # DOS COLUMNAS, no una. Angel (4 sep 01:35) pidio las letras mas grandes
+    # porque «se ve desde el aparador de afuera» y «las personas mayores son
+    # las que compran y las que mas batallan para leer». En una sola columna,
+    # nueve renglones obligaban a bajar el cuerpo a 7 pt — que es justo lo
+    # contrario de lo que pidio. En dos columnas caben a mas del doble.
+    IZQ = TODOS[:5]
+    DER = TODOS[5:]
+    ancho_col = (util - int(14 * MM)) / 2
+    pt = 18.0
+    while pt > 8:
+        fu = f("Montserrat-Medium.ttf", pt)
+        if (max(d.textlength(t, font=fu) for t in TODOS) <= ancho_col
+                and fu.size * 1.34 * 5 <= int(30 * MM)):
+            break
         pt -= 0.25
     fu = f("Montserrat-Medium.ttf", pt)
-    for cx, lista in ((int(52 * MM), izq), (W - int(52 * MM), der)):
-        yy = int(165 * MM)
+    y0 = int(163 * MM)
+    for cx, lista in ((m + int(7 * MM) + ancho_col / 2, IZQ),
+                      (W - m - int(7 * MM) - ancho_col / 2, DER)):
+        yy = y0
         for t in lista:
-            w = d.textlength(t, font=fu)
-            d.text((cx - w / 2, yy), t, font=fu, fill=VERDE)
-            yy += fu.size * 1.75
-    sello(d, W // 2, int(174 * MM), int(12 * MM))
+            d.text((cx - d.textlength(t, font=fu) / 2, yy), t, font=fu, fill=VERDE)
+            yy += fu.size * 1.34
+    yy = y0 + fu.size * 1.34 * 5 + int(2 * MM)
+    fc = f("Montserrat-Medium.ttf", 11.5)
+    tc = "CONTENIDO:  30 CÁPSULAS"
+    d.text(((W - d.textlength(tc, font=fc)) / 2, yy), tc, font=fc, fill=VERDE_CLARO)
 
-    centro(d, int(187 * MM), "CONTENIDO:  30 CÁPSULAS",
-           f("Montserrat-Medium.ttf", 7.5), color=VERDE_CLARO, x0=m, an=util)
-
-    caja = int(194 * MM)
+    caja = int(206 * MM)
     d.rectangle([m + int(6 * MM), caja, W - m - int(6 * MM), caja + int(34 * MM)],
                 outline=VERDE, width=4)
     centro(d, caja + int(5 * MM), "PRECIO DE PROMOCIÓN",
-           f("Montserrat-Black.ttf", 8), color=VERDE_CLARO, x0=m, an=util)
-    centro(d, caja + int(11 * MM), "Paquete Bálsamo + Cápsulas",
-           f("CormorantGaramond-Bold.ttf", 15), x0=m, an=util)
-    fu2, fu3 = f("Montserrat-Black.ttf", 24), f("Montserrat-Medium.ttf", 9)
+           f("Montserrat-Black.ttf", 12), color=VERDE_CLARO, x0=m, an=util)
+    centro(d, caja + int(12 * MM), "Paquete Bálsamo + Cápsulas",
+           f("CormorantGaramond-Bold.ttf", 20), x0=m, an=util)
+    fu2, fu3 = f("Montserrat-Black.ttf", 30), f("Montserrat-Medium.ttf", 12)
     a, b = "$1,895", "   Precio normal $2,359"
     x = (W - d.textlength(a, font=fu2) - d.textlength(b, font=fu3)) / 2
-    yv = caja + int(20 * MM)
+    yv = caja + int(22 * MM)
     d.text((x, yv), a, font=fu2, fill=VERDE)
     d.text((x + d.textlength(a, font=fu2), yv + fu2.size * 0.55), b, font=fu3,
            fill=VERDE_CLARO)
 
-    centro(d, int(232 * MM), "PEDIDOS POR WHATSAPP",
-           f("Montserrat-Medium.ttf", 8.5), color=VERDE_CLARO, x0=m, an=util)
-    centro(d, int(236 * MM), "818 466 84 56", f("Montserrat-Black.ttf", 20))
+    centro(d, int(244 * MM), "PEDIDOS POR WHATSAPP",
+           f("Montserrat-Medium.ttf", 12), color=VERDE_CLARO, x0=m, an=util)
+    centro(d, int(249 * MM), "818 466 84 56", f("Montserrat-Black.ttf", 24))
     return im
 
 

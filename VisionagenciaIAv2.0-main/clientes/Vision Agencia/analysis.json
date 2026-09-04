@@ -1,0 +1,160 @@
+{
+  "detectedProduct": "Vision Agencia — Agencia de marketing creativo. Protagonista: el fundador (hombre, foto real, traje negro, barba, estética noir). Referente estructural: Snoozz Creative Agency. Estética: noir — persianas venecianas, luz ambar, sillaon de cuero, oficina oscura cinematografica. Prop unificador: telefono (vintage o negro).",
+  "brandColors": [
+    "#0D0D0D",
+    "#C9A84C",
+    "#8B2500"
+  ],
+  "analysis": "ESTRUCTURA DE SNOOZZ + ESTETICA NOIR MASCULINA. Protagonista es el fundador animado desde foto real (image-to-video). VOZ FEMENINA clonada en ElevenLabs narrando sobre imagenes del fundador — mismo contraste de poder del referente. Telefono es el prop unificador: aparece en hook (top-down solo), middle (dedo en tecla + cable) y cierre (mano colgando auricular). Escenas con cara visible: 4, 8a, 8b, 8c, 10 — Nano Banana 2 usa foto de referencia del fundador para mantener cara exacta en todas. Escenas sin cara: espaldas, manos, zapatos, labios en macro.",
+  "script": "GUION VOZ (mujer ElevenLabs, tono ejecutivo seguro ligeramente frio):\n\nHola, has llegado a Vision Agencia.\n\nSi buscas hacer crecer tu negocio con contenido que convierte, presiona 1.\n\nSi buscas contenido promedio... marcaste el numero equivocado.\n\nHacemos contenido que vende. Videos virales, anuncios, reels de marca.\n\nSi estas lanzando algo nuevo, o arreglando algo que no funciono, estas exactamente donde necesitas estar.\n\nDeja un mensaje.\n\nO no.\n\n[cuelga el telefono]",
+  "scenes": [
+    {
+      "scene": 1,
+      "second": "0s",
+      "purpose": "hook",
+      "description": "Top-down cenital del telefono vintage verde solo sobre escritorio de madera",
+      "angle": "top-down cenital",
+      "duration": 2,
+      "prompt": "Top-down overhead shot of a vintage green rotary telephone on a warm wooden desk, golden hour warm light from the side, no people, centered composition, cinematic product shot, film grain, 9:16 vertical",
+      "soundEffect": "phone ringing once then silence"
+    },
+    {
+      "scene": 2,
+      "second": "1s",
+      "purpose": "hook",
+      "description": "Mano del fundador con reloj negro alcanzando el telefono — sin cara",
+      "angle": "top-down",
+      "duration": 2,
+      "prompt": "Top-down view of a mans hand wearing a black leather watch reaching toward a vintage black rotary phone on a dark wooden desk, amber side light, cinematic, no face visible, 9:16 vertical",
+      "soundEffect": "receiver being picked up click"
+    },
+    {
+      "scene": 3,
+      "second": "2s",
+      "purpose": "hook",
+      "description": "Close-up lateral bajo zapatos Oxford negros y pantalon oscuro recostados sobre el escritorio — sin cara",
+      "angle": "close-up lateral bajo",
+      "duration": 3,
+      "prompt": "Low angle close-up side shot of a mans legs in slim dark trousers and black Oxford shoes resting on a dark wooden desk, venetian blinds casting amber light stripes in background, powerful and relaxed, cinematic noir, no face visible, 9:16 vertical",
+      "soundEffect": null
+    },
+    {
+      "scene": 4,
+      "second": "4s",
+      "purpose": "build",
+      "description": "CARA DE FRENTE — fundador en sillon de cuero mirando a camara con telefono, luz noir",
+      "angle": "medium frontal",
+      "faceVisible": true,
+      "duration": 4,
+      "prompt": "Medium shot of a bearded man in a black suit seated in a dark leather armchair, holding a vintage black rotary phone receiver, looking directly into camera with a calm and commanding expression, venetian blind shadows striping across his face, warm amber backlight, dark cinematic noir office, face clearly visible, 9:16 vertical",
+      "soundEffect": null
+    },
+    {
+      "scene": 5,
+      "second": "7s",
+      "purpose": "interactive",
+      "description": "MACRO EXTREMO dedo del fundador presionando tecla del telefono — sin cara",
+      "angle": "macro extremo",
+      "duration": 2,
+      "prompt": "Extreme macro close-up of a mans finger with a simple ring pressing a single button on a vintage black telephone keypad, warm golden light catching skin texture and knuckle detail, shallow depth of field, cinematic macro noir, 9:16 vertical",
+      "soundEffect": "phone button beep tone single clear"
+    },
+    {
+      "scene": 6,
+      "second": "10s",
+      "purpose": "gag_wrong_number",
+      "description": "MACRO EXTREMO labios masculinos soplando chicle rosa hasta explotar — sin cara completa",
+      "angle": "macro extremo boca",
+      "duration": 3,
+      "prompt": "Extreme close-up macro of a mans lips blowing a large pink bubble gum bubble until it explodes, warm amber side light, slow motion bubble inflation and pop, pink gum fragments flying, masculine jaw stubble visible, cinematic noir macro, 9:16 vertical",
+      "soundEffect": "bubble gum inflating then loud pop"
+    },
+    {
+      "scene": 7,
+      "second": "12s",
+      "purpose": "birdsEye",
+      "description": "BIRD'S EYE cenital — fundador recostado en sillon visto desde el techo, escritorio noir completo — sin cara",
+      "angle": "bird's eye cenital",
+      "duration": 3,
+      "prompt": "Perfect overhead birds eye view straight down at a man in a dark leather chair with legs up on a large dark wooden desk covered with a vintage telephone notebooks papers and a whiskey glass, he holds the phone receiver, warm amber light from one side, cinematic noir top-down, face not visible from this angle, 9:16 vertical",
+      "soundEffect": null
+    },
+    {
+      "scene": 8,
+      "second": "13s",
+      "purpose": "services",
+      "description": "Tres shots servicios — texto GIGANTE 80% frame, fundador de frente atras reconocible",
+      "angle": "medium shot texto gigante",
+      "duration": 6,
+      "subshots": [
+        {
+          "service": "VIDEOS VIRALES",
+          "faceVisible": true,
+          "prompt": "Medium shot of a bearded man in a black suit facing camera in a dark noir creative office, massive bold white text VIDEOS VIRALES fills 80% of the frame in the foreground, man is small but face clearly recognizable in background, dramatic amber backlight, venetian blind shadows, cinematic, 9:16 vertical"
+        },
+        {
+          "service": "ADS",
+          "faceVisible": true,
+          "prompt": "Medium shot of a bearded man in a black suit facing camera raising a professional camera to his eye in a dark noir studio, massive bold white text ADS fills 80% of the frame in foreground, man clearly visible behind text, warm amber cinematic light, 9:16 vertical"
+        },
+        {
+          "service": "REELS DE MARCA",
+          "faceVisible": true,
+          "prompt": "Medium shot of a bearded man in a black suit facing camera looking at a smartphone with a confident slight smirk in a dark noir office, massive bold white text REELS DE MARCA fills 80% of the frame in foreground, face recognizable behind text, golden amber light, 9:16 vertical"
+        }
+      ]
+    },
+    {
+      "scene": 9,
+      "second": "16s",
+      "purpose": "tension",
+      "description": "Close-up manos masculinas enrollando el cable en espiral del telefono vintage — sin cara",
+      "angle": "close-up manos",
+      "duration": 3,
+      "prompt": "Close-up of a mans hands with a subtle ring twisting and pulling the coiled cord of a vintage black rotary phone on a dark wooden desk, warm amber backlight highlighting knuckles and cord texture, intimate and tense, cinematic noir depth, no face visible, 9:16 vertical",
+      "soundEffect": null
+    },
+    {
+      "scene": 10,
+      "second": "19s",
+      "purpose": "closing_wide",
+      "description": "CARA DE FRENTE — fundador en sillon noir mirando a camara, luz de ventana detras",
+      "angle": "wide frontal",
+      "faceVisible": true,
+      "duration": 5,
+      "prompt": "Wide shot of a bearded man in a black suit seated in a dark leather armchair, facing directly into camera with a calm commanding expression, phone receiver resting on the desk beside him, large dark venetian blind window behind casting dramatic amber light, noir cinematic still, face clearly and fully visible, 9:16 vertical",
+      "soundEffect": null
+    },
+    {
+      "scene": 11,
+      "second": "23s",
+      "purpose": "mystery",
+      "description": "MACRO EXTREMO labios masculinos y barba — dedo tocando la comisura, sin cara completa",
+      "angle": "macro extremo labios",
+      "duration": 2,
+      "prompt": "Extreme macro close-up of a mans lips and beard stubble, one finger with a ring gently touching the corner of his mouth, warm soft amber side light, mysterious and intimate, no full face visible, cinematic noir beauty macro, 9:16 vertical",
+      "soundEffect": null
+    },
+    {
+      "scene": 12,
+      "second": "25s",
+      "purpose": "cta",
+      "description": "Mano masculina colgando el auricular del telefono vintage con gesto definitivo — sin cara",
+      "angle": "close-up telefono",
+      "duration": 3,
+      "prompt": "Close-up of a mans hand deliberately placing the receiver back onto a vintage black rotary telephone on a dark wooden desk, final commanding gesture, warm amber light catching the hand and phone surface, cinematic noir close-up, no face visible, 9:16 vertical",
+      "soundEffect": "receiver hung up mechanical click then silence"
+    },
+    {
+      "scene": 13,
+      "second": "28s",
+      "purpose": "endcard",
+      "description": "Fade a negro CTA Instagram",
+      "angle": "fade",
+      "duration": 3,
+      "prompt": "Screen fades to pure black, Vision Agencia logo and Instagram handle appear in white and gold, minimal and premium, 9:16 vertical",
+      "soundEffect": null
+    }
+  ],
+  "voice": "MUJER — ElevenLabs. Tono ejecutivo, seguro, ligeramente frio. Voz femenina narrando sobre protagonista masculino."
+}

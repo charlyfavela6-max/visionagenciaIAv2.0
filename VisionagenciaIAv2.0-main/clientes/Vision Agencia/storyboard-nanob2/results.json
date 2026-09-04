@@ -1,0 +1,38 @@
+[
+  {
+    "scene": "chicle-inicio-boca",
+    "url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/0254a537-cee2-4d65-92be-b9b9ecaab5c1.jpg",
+    "path": "/workspaces/Vision-agencia-IA/clientes/Vision Agencia/storyboard-nanob2/chicle-inicio-boca.jpg",
+    "ok": true
+  },
+  {
+    "scene": "hook-telefono-en-mano",
+    "url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/c6be6cd9-92f9-4b08-9dd2-7ed7cddc7b64.jpg",
+    "path": "/workspaces/Vision-agencia-IA/clientes/Vision Agencia/storyboard-nanob2/hook-telefono-en-mano.jpg",
+    "ok": true
+  },
+  {
+    "scene": "demo-telefono-en-oreja",
+    "url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/689455e7-f4c2-4dc6-9f47-b83b388d023f.jpg",
+    "path": "/workspaces/Vision-agencia-IA/clientes/Vision Agencia/storyboard-nanob2/demo-telefono-en-oreja.jpg",
+    "ok": true
+  },
+  {
+    "scene": "demo-chicle-explotando",
+    "url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/1af58ed3-cef4-4c79-8cbc-ba090ed50bae.jpg",
+    "path": "/workspaces/Vision-agencia-IA/clientes/Vision Agencia/storyboard-nanob2/demo-chicle-explotando.jpg",
+    "ok": true
+  },
+  {
+    "scene": "trust-fumando",
+    "url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/73cc1fc6-1f4e-418d-9c26-077f4ee5be3a.jpg",
+    "path": "/workspaces/Vision-agencia-IA/clientes/Vision Agencia/storyboard-nanob2/trust-fumando.jpg",
+    "ok": true
+  },
+  {
+    "scene": "cta-mirada-camara",
+    "url": "https://atlas-media.oss-us-west-1.aliyuncs.com/images/eb774202-d05f-4575-a455-57b15a325193.jpg",
+    "path": "/workspaces/Vision-agencia-IA/clientes/Vision Agencia/storyboard-nanob2/cta-mirada-camara.jpg",
+    "ok": true
+  }
+]
