@@ -50,47 +50,53 @@ CLIP_CERCA = 0.01      # la camara va pegada a un rincon: el 0.1 de fabrica reco
 #   pa  piso z  2.80  techo  5.60     ojo a  4.35
 # y en planta la casa va de x 1.10 a 6.90 y de y 6.67 a 15.52. Las divisiones
 # (`div_*`) y los `muro_*` son los que parten cada nivel en cuartos.
+# CAMARAS RECALCULADAS EL 3 SEP 2026 por `camaras_auto.py`.
+#
+# Las de antes se pusieron A OJO y nunca se comprobo que vieran su cuarto.
+# Varias miraban al de al lado: la de `n1_bano` encuadraba `n1_cama_1` y el
+# tapete verde de la recamara, la de `pb_mediobano` la cama king, y la de
+# `pb_sala` le pasaba el medio bano por delante. Como el gris salia casi
+# vacio, la IA rellenaba — de ahi los banos «inventados».
+#
+# Ahora cada una sale de la CAJA de su cuarto (limites de los muros
+# divisorios, no del inundado: los vanos no cierran y la inundacion se
+# pasaba de un cuarto a otro), se prueban todas las celdas, y gana la que
+# de verdad VE sus muebles — comprobado con un rayo a cada uno. El lente
+# sale del angulo que abarcan, con 25 % de aire, no de un 16 mm fijo.
+# Las 16 ven el 100 % de la muestra de su mobiliario.
 CUARTOS = {
-    # --- nivel -1 ---------------------------------------------------------
-    "n1_recamara2":   ((4.30,  9.90, -1.35), (2.30,  7.60,  -1.68), 18,
-                       "the front secondary bedroom, floor-to-ceiling sliding window"),
-    "n1_bano":        ((4.45, 11.85, -1.40), (1.80, 10.90,  -1.63), 16,
-                       "the lower bathroom, with shower, washbasin and WC"),
-    "n1_recamara1":   ((4.35, 12.35, -1.35), (2.40, 14.60,  -1.68), 18,
-                       "the back secondary bedroom"),
-    "n1_bodega":      ((6.70,  9.95, -1.35), (5.60,  7.40,  -1.58), 18,
-                       "the storage room on the lower floor"),
-    "n1_estudio":     ((5.10, 10.55, -1.35), (6.30, 12.30,  -1.58), 18,
-                       "the study, with the desk, the monitor, the bookshelf and a plant"),
-    "n1_lavado":      ((6.70, 13.50, -1.35), (5.30, 15.00,  -1.63), 16,
-                       "the laundry room, with washer and dryer"),
-    # --- planta baja ------------------------------------------------------
-    "pb_sala":        ((4.45, 10.05,  1.52), (2.20,  7.40,   1.12), 18,
-                       "the ground-floor living room, with the camel leather armchair "
-                       "and the square travertine coffee table"),
-    "pb_mediobano":   ((4.45, 11.85,  1.50), (1.80, 10.80,   1.17), 16,
-                       "the guest half-bath, washbasin and WC only"),
-    "pb_recamara_ppal": ((4.40, 12.40, 1.52), (2.60, 14.60,   1.12), 18,
-                       "the master bedroom, with the beige upholstered headboard and the "
-                       "chocolate throw at the foot of the bed"),
-    "pb_escalera":    ((6.70,  6.90,  1.52), (5.60,  9.60,   1.02), 18,
-                       "the wooden staircase going up between floors"),
-    "pb_vestidor":    ((5.05, 10.55,  1.50), (6.40, 12.40,   1.22), 16,
-                       "the walk-in closet in pale oak, open shelves and drawers"),
-    "pb_bano_ppal":   ((6.70, 13.50,  1.50), (5.30, 14.90,   1.22), 16,
-                       "the master bathroom"),
-    # --- planta alta (una sola pieza; tres tomas) --------------------------
-    "pa_cocina":      ((5.80,  8.20,  4.35), (1.60, 10.50,   3.97), 20,
-                       "the kitchen along the far wall, taupe cabinets, stone countertop "
-                       "and the window over the sink"),
-    "pa_sala":        ((6.60,  7.10,  4.35), (3.20, 10.40,   3.92), 20,
-                       "the upper living room, with the sofa and the low coffee table"),
-    "pa_comedor":     ((2.20,  7.30,  4.35), (5.60, 10.40,   3.97), 20,
-                       "the dining area, with the table and six chairs"),
-    # --- azotea -----------------------------------------------------------
-    "rg_terraza":     ((6.40, 12.70,  4.40), (3.30, 14.60,   3.72), 20,
-                       "the roof terrace: BARE, pale floor tile, low white parapet and one "
-                       "teak table with chairs, no planters"),
+    "n1_recamara2": ((4.47, 6.89, -1.35), (2.96, 8.33, -1.6), 12,
+        'the front secondary bedroom, floor-to-ceiling sliding window'),
+    "n1_bano": ((1.35, 11.85, -1.35), (3.60, 10.90, -1.72), 13,
+        'the lower bathroom: open walk-in shower with wood-look tile and a dark brown band, floating wood vanity, mirror and WC'),
+    "n1_recamara1": ((1.33, 12.14, -1.35), (2.62, 14.36, -1.6), 13,
+        'the back secondary bedroom'),
+    "n1_bodega": ((4.82, 6.89, -1.35), (5.85, 8.39, -1.6), 17,
+        'the storage room on the lower floor'),
+    "n1_estudio": ((5.57, 10.52, -1.35), (6.27, 11.96, -1.6), 12,
+        'the study, with the desk, the monitor, the bookshelf and a plant'),
+    "n1_lavado": ((5.12, 15.27, -1.35), (6.03, 13.78, -1.6), 12,
+        'the laundry room, with washer and dryer'),
+    "pb_sala": ((4.62, 9.74, 1.52), (2.11, 8.56, 1.27), 12,
+        'the ground-floor living room, with the camel leather armchair and the square travertine coffee table'),
+    "pb_mediobano": ((4.47, 10.53, 1.52), (2.71, 11.23, 1.27), 12,
+        'the guest half-bath, washbasin and WC only'),
+    "pb_recamara_ppal": ((4.47, 12.28, 1.52), (2.73, 14.57, 1.27), 12,
+        'the master bedroom, with the beige upholstered headboard and the chocolate throw at the foot of the bed'),
+    "pb_escalera": ((4.82, 6.74, 1.52), (6.4, 8.47, 1.27), 12,
+        'the wooden staircase going up between floors'),
+    "pb_vestidor": ((5.12, 12.77, 1.52), (6.33, 11.55, 1.27), 12,
+        'the walk-in closet in pale oak, open shelves and drawers'),
+    "pb_bano_ppal": ((4.95, 15.15, 1.52), (6.30, 13.95, 1.15), 13,
+        'the master bathroom: open walk-in shower with wood-look tile and a dark brown band, a small horizontal window, a floating wood vanity with a white basin, a large mirror and a WC'),
+    "pa_cocina": ((2.60, 9.35, 4.35), (4.60, 6.95, 4.05), 16,
+        'the kitchenette: wood island with a thick white top, a wood back counter with a black cooktop, white upper cabinets and two floating wood shelves under a small horizontal window'),
+    "pa_sala": ((1.33, 12.18, 4.35), (3.6, 10.54, 4.1), 12,
+        'the upper living room, with the sofa and the low coffee table'),
+    "pa_comedor": ((1.33, 9.68, 4.35), (4.99, 10.78, 4.1), 12,
+        'the dining area, with the table and six chairs'),
+    "rg_terraza": ((1.62, 12.43, 4.4), (4.41, 14.21, 4.15), 12,
+        'the roof terrace: BARE, pale floor tile, low white parapet and one teak table with chairs, no planters'),
 }
 
 
@@ -100,16 +106,25 @@ def limpia():
 
     Los `*_fantasma` son copias del mismo muro en el mismo sitio, para el efecto
     de desvanecido del recorrido. Vistas desde dentro no aportan nada y pelean
-    por el mismo pixel. Las `rg_jardinera_*` son cilindros verdes que la casa
-    REAL no tiene: si se dejan, la IA los copia como macetas.
+    por el mismo pixel. CORREGIDO EL 3 SEP: las `rg_jardinera_*` SI existen. El video que mando
+    Mariano ese dia las ensena — son dos jardineras rectangulares de concreto
+    a lo largo del pretil, con matas de verdad (`rg_mata_*`, 19 piezas). Se
+    escondian por creerlas placeholder y por eso la IA sacaba la azotea pelada.
     """
     fuera = 0
     for o in bpy.data.objects:
         n = o.name
-        if n.endswith("_fantasma") or n.startswith("rg_jardinera"):
+        if n.endswith("_fantasma"):
             o.hide_render = o.hide_viewport = True
             fuera += 1
-    for c in ("FANTASMAS", "CEBOLLA_muros", "ROTULOS"):
+    # OJO: `CEBOLLA_muros` NO se esconde. Ahi viven 12 MUROS REALES de la casa
+    # — n1_muro_este_estudio (el que lleva la puerta del estudio),
+    # n1_muro_este_lavado, los tres pb_muro_oeste, los pa_muro_oeste... — que
+    # estan en su sitio con el Alpha animado del desvanecido del recorrido.
+    # Escondiendolos, los cuartos se renderizaban SIN su muro y SIN su puerta,
+    # y de ahi que el estudio saliera abierto. En el cuadro 1021 el Alpha ya
+    # esta al 100 %, asi que no estorban.
+    for c in ("FANTASMAS", "ROTULOS"):
         col = bpy.data.collections.get(c)
         if col:
             for o in col.objects:

@@ -1,5 +1,5 @@
-OK n1_recamara2 gris f1021 810x1440 (60 escondidos)
+OK n1_recamara2 gris f1021 810x1440 (46 escondidos)
 Blender 3.3.21 (hash e016c21db151 built 2024-07-15 10:26:47)
-Read blend: /workspaces/visionagenciaIAv2.0/VisionagenciaIAv2.0-main/clientes/Mariano/de_whatsapp/catania_LIGERA.blend
+Read blend: /workspaces/visionagenciaIAv2.0/VisionagenciaIAv2.0-main/clientes/Mariano/de_whatsapp/catania_MEJORADO.blend
 
 Blender quit

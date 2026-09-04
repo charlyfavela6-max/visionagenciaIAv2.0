@@ -62,12 +62,19 @@ CUADRO = 1021
 CASA = (1.10, 6.90, 6.67, 15.52)      # x0 x1 y0 y1, del propio archivo
 CELDA = 0.15
 
-# nivel -> (piso, techo). El rg no tiene techo: se le da altura de barandal.
+# nivel -> (piso, techo).
+#
+# OJO CON EL rg: LA TERRAZA NO ESTA ARRIBA DE LA PLANTA ALTA, esta EN LA MISMA.
+# Se vio en el inventario del 3 sep: `rg_jardinera_fondo` va de z 2.80 a 3.22 y
+# `pa_sofa_asiento` de 2.96 a 3.26 — el mismo piso. La casa tiene TRES losas
+# (n1, pb, pa), y la azotea es la parte descubierta de la de arriba, no un
+# cuarto nivel. Dandole (5.60, 6.70) la mascara del rg no encontraba un solo
+# muro y salia del tamano de la planta entera.
 NIVELES = {
     "n1": (-2.75, -0.20),
     "pb": (-0.05,  2.60),
     "pa": ( 2.80,  5.60),
-    "rg": ( 5.60,  6.70),
+    "rg": ( 2.80,  5.60),
 }
 
 
@@ -426,56 +433,60 @@ def saca(ruta):
     print("  ->", ruta, flush=True)
 
 
-a = sys.argv[sys.argv.index("--") + 1:]
-# OJO: no se llaman LENTE ni nada que pise las constantes de arriba — la
-# primera vez el `LENTE` de la linea de comandos machaco el de OJO/MIRA/LENTE
-# y la camara salio con lente 0.
-_A, _B, _C, DIR = float(a[0]), float(a[1]), float(a[2]), a[3]
-W = int(a[4]) if len(a) > 4 else 1536
-H = int(a[5]) if len(a) > 5 else 1152
-QUE = a[6] if len(a) > 6 else "todo"
+# --- de aqui abajo, solo como guion suelto ---------------------------------
+# `camaras_auto.py` IMPORTA este archivo para reusar las manchas por nivel.
+# Blender corre los -P como __main__, asi que la linea de comandos no cambia.
+if __name__ == "__main__":
+    a = sys.argv[sys.argv.index("--") + 1:]
+    # OJO: no se llaman LENTE ni nada que pise las constantes de arriba — la
+    # primera vez el `LENTE` de la linea de comandos machaco el de OJO/MIRA/LENTE
+    # y la camara salio con lente 0.
+    _A, _B, _C, DIR = float(a[0]), float(a[1]), float(a[2]), a[3]
+    W = int(a[4]) if len(a) > 4 else 1536
+    H = int(a[5]) if len(a) > 5 else 1152
+    QUE = a[6] if len(a) > 6 else "todo"
 
-os.makedirs(DIR, exist_ok=True)
-sc = bpy.context.scene
-sc.frame_set(CUADRO)
-bpy.context.view_layer.update()
-print("escondidos por limpia():", limpia())
-apunta_muros()
-camara_del_corte(_A, _B, _C)
+    os.makedirs(DIR, exist_ok=True)
+    sc = bpy.context.scene
+    sc.frame_set(CUADRO)
+    bpy.context.view_layer.update()
+    print("escondidos por limpia():", limpia())
+    apunta_muros()
+    camara_del_corte(_A, _B, _C)
 
-r = sc.render
-r.resolution_x, r.resolution_y, r.resolution_percentage = W, H, 100
-r.image_settings.file_format = 'PNG'
-sc.display.render_aa = '8'
+    r = sc.render
+    r.resolution_x, r.resolution_y, r.resolution_percentage = W, H, 100
+    r.image_settings.file_format = 'PNG'
+    sc.display.render_aa = '8'
 
-if QUE in ("gris", "todo"):
-    modo("gris")
-    saca(os.path.join(DIR, "corte_gris.png"))
+    if QUE in ("gris", "todo"):
+        modo("gris")
+        saca(os.path.join(DIR, "corte_gris.png"))
 
-if QUE in ("blanco", "todo"):
-    modo("blanco")
-    saca(os.path.join(DIR, "corte_blanco.png"))
+    if QUE in ("blanco", "todo"):
+        modo("blanco")
+        saca(os.path.join(DIR, "corte_blanco.png"))
 
-if QUE in ("mascaras", "todo"):
-    # todo negro; cada mascara se enciende sola
-    for o in bpy.data.objects:
-        if o.type == 'MESH':
-            o.color = (0.0, 0.0, 0.0, 1.0)
-    modo("mascara")
-    sc.display.render_aa = 'OFF'            # la mascara se quiere dura, sin gris
-    hechos = set()
-    for cuarto in CUARTOS:
-        nivel = cuarto.split("_", 1)[0]
-        if nivel in ABIERTOS:
-            if nivel in hechos:
+    if QUE in ("mascaras", "todo"):
+        # todo negro; cada mascara se enciende sola
+        for o in bpy.data.objects:
+            if o.type == 'MESH':
+                o.color = (0.0, 0.0, 0.0, 1.0)
+        modo("mascara")
+        sc.display.render_aa = 'OFF'            # la mascara se quiere dura, sin gris
+        hechos = set()
+        for cuarto in CUARTOS:
+            nivel = cuarto.split("_", 1)[0]
+            if nivel in ABIERTOS:
+                if nivel in hechos:
+                    continue
+                hechos.add(nivel)
+            ob = caja_del_cuarto(cuarto)
+            if ob is None:
+                print("  SIN MANCHA:", cuarto, flush=True)
                 continue
-            hechos.add(nivel)
-        ob = caja_del_cuarto(cuarto)
-        if ob is None:
-            print("  SIN MANCHA:", cuarto, flush=True)
-            continue
-        clave = nivel if nivel in ABIERTOS else cuarto
-        saca(os.path.join(DIR, "mascara_%s.png" % clave))
-        bpy.data.objects.remove(ob, do_unlink=True)
+            clave = nivel if nivel in ABIERTOS else cuarto
+            saca(os.path.join(DIR, "mascara_%s.png" % clave))
+            bpy.data.objects.remove(ob, do_unlink=True)
 
-print("LISTO", DIR)
+    print("LISTO", DIR)

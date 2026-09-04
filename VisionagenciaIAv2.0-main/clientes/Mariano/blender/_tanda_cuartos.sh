@@ -9,7 +9,7 @@
 #   ./_tanda_cuartos.sh [trabajadores]
 BL=/tmp/blender-3.3.21-linux-x64/blender
 RAIZ=/workspaces/visionagenciaIAv2.0/VisionagenciaIAv2.0-main
-BLEND=$RAIZ/clientes/Mariano/de_whatsapp/catania_LIGERA.blend
+BLEND=$RAIZ/clientes/Mariano/de_whatsapp/catania_MEJORADO.blend
 GUION=$RAIZ/clientes/Mariano/blender/cuartos_camara.py
 SAL=$RAIZ/clientes/Mariano/referencias_3d/cuartos_cam
 N=${1:-3}
